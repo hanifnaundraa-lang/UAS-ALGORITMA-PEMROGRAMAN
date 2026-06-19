@@ -1,46 +1,48 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(AstroStrike VERSION 0.1 LANGUAGES CXX)
+project(AstroStrike VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Gui Qml Quick)
-
-qt_standard_project_setup()
-
-qt_add_executable(AstroStrike
+# Collect all source files
+set(SOURCES
     src/main.cpp
-    src/gamecontroller.h src/gamecontroller.cpp
-    src/player.h src/player.cpp
-    src/enemy.h src/enemy.cpp
-    src/bullet.h src/bullet.cpp
-    src/scoremanager.h src/scoremanager.cpp
+    src/game.cpp
+    src/player.cpp
+    src/bullet.cpp
+    src/enemy.cpp
+    src/scoremanager.cpp
+    src/inventory.cpp
+    src/shop.cpp
+    src/trading.cpp
+    src/gacha.cpp
+)
+
+set(HEADERS
+    src/game.h
+    src/player.h
+    src/bullet.h
+    src/enemy.h
+    src/scoremanager.h
+    src/inventory.h
+    src/shop.h
+    src/trading.h
+    src/gacha.h
     src/gamedata.h
     src/gameconfig.h
     src/gameutils.h
     src/gameexception.h
 )
 
-qt_add_qml_module(AstroStrike
-    URI AstroStrike
-    VERSION 1.0
-    QML_FILES
-        qml/Main.qml
-        qml/MainMenu.qml
-        qml/GameScreen.qml
-        qml/GameOverScreen.qml
-        qml/LeaderboardScreen.qml
-    RESOURCES
-        assets/player.png
-        assets/enemy.png
-        assets/bullet.png
-        assets/background.png
-)
+# Build terminal executable (no Qt dependency)
+add_executable(AstroStrike ${SOURCES} ${HEADERS})
 
-target_link_libraries(AstroStrike PRIVATE Qt6::Gui Qt6::Qml Qt6::Quick)
+# Include src directory for header resolution
+target_include_directories(AstroStrike PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
-install(TARGETS AstroStrike
-    BUNDLE DESTINATION .
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+# Set working directory so data/ is accessible at runtime
+set_target_properties(AstroStrike PROPERTIES
+    VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
 )

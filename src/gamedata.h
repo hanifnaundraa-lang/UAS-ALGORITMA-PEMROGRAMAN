@@ -1,26 +1,69 @@
-#ifndef GAMEDATA_H
-#define GAMEDATA_H
+#pragma once
+#include <string>
 
-#include <QString>
-#include <QDateTime>
+// Material: Struct, Pointer & Reference
+// Shared data structures for Astro Strike
 
-// Material: Struct
-struct Vector2D {
-    float x;
-    float y;
+struct Position {
+    int x;
+    int y;
+};
+
+struct Player {
+    std::string name;
+    Position position;
+    int health;
+    int score;
+    int coin;
+    int destroyedEnemy;
+};
+
+struct Bullet {
+    Position position;
+    bool active;
+};
+
+struct Enemy {
+    Position position;
+    int health;
+    bool active;
+};
+
+// Structs for future modules (inventory, shop, trading, gacha, leaderboard)
+struct Item {
+    int id;
+    std::string name;
+    std::string type;
+    int price;
+    int quantity;
 };
 
 struct PlayerScore {
-    QString name;
+    std::string name;
     int score;
     int destroyedEnemy;
-    QDateTime dateTime;
+    std::string dateTime;
 };
 
-struct GameStats {
-    int currentScore;
-    int enemiesDestroyed;
-    int livesRemaining;
+struct Wallet {
+    std::string playerName;
+    int coin;
+    double btc;
+    double eth;
 };
 
-#endif // GAMEDATA_H
+struct MarketRate {
+    int day;
+    int btcPrice;
+    int ethPrice;
+};
+
+struct TradeRecord {
+    int day;
+    std::string playerName;
+    std::string type;
+    std::string asset;
+    double amount;
+    int price;
+    int total;
+};
