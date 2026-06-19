@@ -7,8 +7,8 @@ namespace TradingModule {
 
     void displayMarket();
     void displayWallet(const Wallet& wallet);
-    bool buyBTC(Wallet& wallet, double amount, int price);
-    bool sellBTC(Wallet& wallet, double amount, int price);
-    void nextDay();
+    void buyBTC(Wallet& wallet, double amount, int price);
+    void sellBTC(Wallet& wallet, double amount, int price);
+    void history();
 
 } // namespace TradingModule
