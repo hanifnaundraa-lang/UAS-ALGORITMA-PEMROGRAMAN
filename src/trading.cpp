@@ -76,8 +76,8 @@ namespace TradingModule {
         file.close();
     }
 
-    void buyBTC(Wallet& wallet, double amount, int price) {
-        (void)wallet; (void)amount; (void)price;
+    void buyBTC(Wallet& wallet) {
+        (void)wallet;
         std::fstream file("data/market_history.csv", std::ios::in | std::ios::app);
         std::fstream berkas("data/trade_history.csv", std::ios::in | std::ios::app);
         std::fstream file1("data/wallet.csv", std::ios::in | std::ios::app);
@@ -123,8 +123,8 @@ namespace TradingModule {
         file1.close();
     }
 
-    void sellBTC(Wallet& wallet, double amount, int price) {
-        (void)wallet; (void)amount; (void)price;
+    void sellBTC(Wallet& wallet) {
+        (void)wallet;
         std::fstream file("data/market_history.csv", std::ios::in | std::ios::app);
         std::fstream berkas("data/trade_history.csv", std::ios::in | std::ios::app);
         std::fstream file1("data/wallet.csv", std::ios::in | std::ios::app);
@@ -220,6 +220,43 @@ namespace TradingModule {
         garis();
         file.clear();
         file.close();
+    }
+
+    void menuTrading(Wallet& wallet){
+        int choice;
+
+        do{
+            garis();
+            std::cout << "\nSelamat Datang di Trading BTC!" << std::endl;
+            garis();
+            std::cout << "1. Lihat harga BTC hari ini" << std::endl;
+            std::cout << "2. Beli BTC hari ini" << std::endl;
+            std::cout << "3. Jual BTC hari ini" << std::endl;
+            std::cout << "4. Lihat riwayat transaksi" << std::endl;
+            std::cout << "0. Keluar" << std::endl;
+            std::cout << "Pilihanmu: ";
+            std::cin >> choice; 
+            std::cout << std::endl;
+
+            if (choice == 1) {
+                garis();
+                displayMarket();
+                garis();
+            } else if (choice == 2) {
+                garis();
+                buyBTC(wallet);
+                garis();
+            } else if (choice == 3) {
+                garis();
+                sellBTC(wallet);
+                garis();
+            } else if (choice == 4) {
+                history();
+            } else {
+                break;
+            }
+
+        } while (choice != 0);
     }
 
 } // namespace TradingModule
