@@ -1,24 +1,29 @@
-#ifndef GAMEEXCEPTION_H
-#define GAMEEXCEPTION_H
-
-#include <exception>
+#pragma once
+#include <stdexcept>
 #include <string>
 
 // Material: Exception Handling
-class GameException : public std::exception {
+
+class GameException : public std::runtime_error {
 public:
-    explicit GameException(const std::string& message) : m_message(message) {}
-    const char* what() const noexcept override {
-        return m_message.c_str();
-    }
-private:
-    std::string m_message;
+    explicit GameException(const std::string& message)
+        : std::runtime_error("[Game Error] " + message) {}
 };
 
-class FileLoadException : public GameException {
+class FileException : public std::runtime_error {
 public:
-    explicit FileLoadException(const std::string& filename) 
-        : GameException("Failed to load file: " + filename) {}
+    explicit FileException(const std::string& message)
+        : std::runtime_error("[File Error] " + message) {}
 };
 
-#endif // GAMEEXCEPTION_H
+class InputException : public std::runtime_error {
+public:
+    explicit InputException(const std::string& message)
+        : std::runtime_error("[Input Error] " + message) {}
+};
+
+class InsufficientFundsException : public std::runtime_error {
+public:
+    explicit InsufficientFundsException(const std::string& message)
+        : std::runtime_error("[Funds Error] " + message) {}
+};

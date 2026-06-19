@@ -1,30 +1,28 @@
-#ifndef PLAYER_H
-#define PLAYER_H
-
-#include <QObject>
+#pragma once
 #include "gamedata.h"
+#include "gameconfig.h"
 
-class Player : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(float x READ x WRITE setX NOTIFY xChanged)
-    Q_PROPERTY(float y READ y WRITE setY NOTIFY yChanged)
+// Material: Function declarations for Player module
+namespace PlayerModule {
 
-public:
-    explicit Player(QObject *parent = nullptr);
+    // Initialize player with name and default values
+    // Material: Struct & Reference
+    void initPlayer(Player& player, const std::string& name);
 
-    float x() const { return m_position.x; }
-    void setX(float x);
+    // Move player left (decrease x)
+    void moveLeft(Player& player);
 
-    float y() const { return m_position.y; }
-    void setY(float y);
+    // Move player right (increase x)
+    void moveRight(Player& player);
 
-signals:
-    void xChanged();
-    void yChanged();
+    // Material: Default Argument
+    void addScore(Player& player, int points = GameConfig::SCORE_PER_ENEMY);
+    void addCoin(Player& player, int coins = GameConfig::COIN_PER_ENEMY);
 
-private:
-    // Material: Pointer & Reference (will be used in logic later)
-    Vector2D m_position;
-};
+    // Reduce health
+    void takeDamage(Player& player, int damage = 1);
 
-#endif // PLAYER_H
+    // Check if player is alive
+    bool isAlive(const Player& player);
+
+} // namespace PlayerModule

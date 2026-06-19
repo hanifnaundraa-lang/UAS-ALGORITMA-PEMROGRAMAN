@@ -10,15 +10,22 @@ compile_commands.json
 CTestTestfile.cmake
 _deps/
 
-# Qt / QML
-*.qmlc
-*.jsc
-.qtc_clangd/
-*.user
+# Build output
+*.exe
+*.obj
+*.o
+*.ilk
+*.pdb
 
-# VS Code
+# IDE
 .vscode/
+.vs/
+*.user
+.idea/
 
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# MD
+AGENTS.md

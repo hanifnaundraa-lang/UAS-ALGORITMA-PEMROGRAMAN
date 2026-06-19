@@ -1,31 +1,18 @@
-#ifndef SCOREMANAGER_H
-#define SCOREMANAGER_H
-
-#include <QObject>
-#include <vector>
-#include <list>
+#pragma once
 #include "gamedata.h"
+#include <vector>
+#include <string>
 
-// Material: STL Vector & List, File Handling & CSV Processing
-class ScoreManager : public QObject {
-    Q_OBJECT
-public:
-    explicit ScoreManager(QObject *parent = nullptr);
+// Placeholder for Leaderboard module — will be implemented by Member 2
+namespace ScoreManager {
 
-    // Material: Function Overloading
-    void addScore(const PlayerScore& score);
-    void addScore(QString name, int score, int enemies);
+    // Save a player's score to leaderboard CSV
+    void saveScore(const PlayerScore& score);
 
-    void loadLeaderboard(const QString& filename);
-    void saveLeaderboard(const QString& filename);
+    // Load all scores from leaderboard CSV
+    std::vector<PlayerScore> loadScores();
 
-    // Material: Sort, Find, Count, Lambda Expression
-    void sortScores();
-    int countHighScores(int threshold);
+    // Display leaderboard (sorted by score)
+    void displayLeaderboard();
 
-private:
-    // Material: STL Vector & List
-    std::vector<PlayerScore> m_scores;
-};
-
-#endif // SCOREMANAGER_H
+} // namespace ScoreManager

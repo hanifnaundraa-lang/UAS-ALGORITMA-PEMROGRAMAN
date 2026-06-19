@@ -1,17 +1,33 @@
 #include "bullet.h"
 
-Bullet::Bullet(QObject *parent) : QObject(parent), m_position{0, 0} {}
+// Material: STL Vector & Iterator
+namespace BulletModule {
 
-void Bullet::setX(float x) {
-    if (m_position.x != x) {
-        m_position.x = x;
-        emit xChanged();
+    void spawnBullet(std::vector<Bullet>& bullets, int x, int y) {
+        Bullet b;
+        b.position.x = x;
+        b.position.y = y;
+        b.active = true;
+        bullets.push_back(b);
     }
-}
 
-void Bullet::setY(float y) {
-    if (m_position.y != y) {
-        m_position.y = y;
-        emit yChanged();
+    void updateBullets(std::vector<Bullet>& bullets) {
+        // Material: Iterator — update and remove inactive bullets
+        for (auto it = bullets.begin(); it != bullets.end(); ) {
+            it->position.y -= 1;  // Move bullet upward
+
+            // Deactivate if bullet moves above the arena
+            if (it->position.y < 0) {
+                it->active = false;
+            }
+
+            // Remove inactive bullets
+            if (!it->active) {
+                it = bullets.erase(it);
+            } else {
+                ++it;
+            }
+        }
     }
-}
+
+} // namespace BulletModule

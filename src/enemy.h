@@ -1,29 +1,16 @@
-#ifndef ENEMY_H
-#define ENEMY_H
-
-#include <QObject>
+#pragma once
 #include "gamedata.h"
+#include "gameconfig.h"
+#include <list>
 
-class Enemy : public QObject {
-    Q_OBJECT
-    Q_PROPERTY(float x READ x WRITE setX NOTIFY xChanged)
-    Q_PROPERTY(float y READ y WRITE setY NOTIFY yChanged)
+// Material: STL List, Function declarations
+namespace EnemyModule {
 
-public:
-    explicit Enemy(QObject *parent = nullptr);
+    // Spawn a new enemy at random x position at the top
+    void spawnEnemy(std::list<Enemy>& enemies);
 
-    float x() const { return m_position.x; }
-    void setX(float x);
+    // Update all enemies (move downward), remove inactive ones
+    // Material: Iterator
+    void updateEnemies(std::list<Enemy>& enemies);
 
-    float y() const { return m_position.y; }
-    void setY(float y);
-
-signals:
-    void xChanged();
-    void yChanged();
-
-private:
-    Vector2D m_position;
-};
-
-#endif // ENEMY_H
+} // namespace EnemyModule
