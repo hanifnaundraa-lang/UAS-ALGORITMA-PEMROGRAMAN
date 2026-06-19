@@ -35,6 +35,7 @@ struct Item {
     std::string name;
     std::string type;
     int price;
+    std::string effect;     // untuk efek item, misal "heal", "damage boost", dll
     int quantity;
 };
 

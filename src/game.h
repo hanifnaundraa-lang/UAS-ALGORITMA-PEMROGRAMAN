@@ -6,6 +6,8 @@
 #include "player.h"
 #include "bullet.h"
 #include "enemy.h"
+#include "inventory.h"
+#include "shop.h"
 #include <vector>
 #include <list>
 #include <string>
@@ -27,6 +29,8 @@ private:
     void startGame();
     void showGameOver();
     void showControls();
+    void showInventory();
+    void showShop();
 
     // --- Game loop functions ---
     void handleInput();
@@ -38,8 +42,9 @@ private:
 
     // --- State ---
     Player player;
-    std::vector<Bullet> bullets;   // Material: STL Vector
-    std::list<Enemy> enemies;      // Material: STL List
+    std::vector<Item> inventory;    // Material: STL Vector - item yang dimiliki pemain
+    std::vector<Bullet> bullets;    // Material: STL Vector
+    std::list<Enemy> enemies;       // Material: STL List
     bool isRunning;
     bool isPaused;
     int frameCounter;

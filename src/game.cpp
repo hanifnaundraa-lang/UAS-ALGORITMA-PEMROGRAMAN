@@ -36,9 +36,15 @@ void Game::run() {
                     startGame();
                     break;
                 case 2:
-                    showControls();
+                    showInventory();
                     break;
                 case 3:
+                    showShop();
+                    break;
+                case 4:
+                    showControls();
+                    break;
+                case 5:
                     appRunning = false;
                     break;
                 default:
@@ -84,8 +90,10 @@ void Game::showMainMenu() {
     std::cout << "\n\n";
 
     std::cout << "    [1] Start Game\n";
-    std::cout << "    [2] Controls\n";
-    std::cout << "    [3] Exit\n";
+    std::cout << "    [2] Inventory\n";
+    std::cout << "    [3] Shop\n";
+    std::cout << "    [4] Controls\n";
+    std::cout << "    [5] Exit\n";
     std::cout << "\n    Enter your choice: ";
 }
 
@@ -136,6 +144,84 @@ void Game::showControls() {
     _getch();
 }
 
+// ============================================================
+// Materi: Function, Exception Handling (Inventory screen)
+// ============================================================
+void Game::showInventory() {
+    system("cls");
+
+    // Player harus memiliki name sebelum inventory dapat ditampilkan
+    if (player.name.empty()) {
+        std::cout << "\n  You need to enter a player name first.\n";
+        std::cout << "  Name: ";
+        std::string name;
+        std::getline(std::cin, name);
+
+        if (name.empty()) {
+            std::cout << "\n  No name entered. Returning to menu...";
+            _getch();
+            return;
+        }
+        PlayerModule::initPlayer(player, name);
+    }
+
+    // Material: Exception Handling, loading inventory tidak boleh gagal
+    try {
+        inventory = InventoryModule::loadInventory(player.name);
+    } catch (const FileException& e) {
+        std::cout << "\n  " << e.what() << "\n";
+    }
+
+    InventoryModule::displayInventory(inventory);
+    std::cout << "    Press any key to return to Main Menu...";
+    _getch();
+}
+
+// ============================================================
+// Materi: Function, Exception Handling (Shop screen)
+// ============================================================
+void Game::showShop() {
+    system("cls");
+
+    // Player harus memiliki name sebelum pembelian dapat ditampilkan
+    if (player.name.empty()) {
+        std::cout << "\n  You need to enter a player name first.\n";
+        std::cout << "  Name: ";
+        std::string name;
+        std::getline(std::cin, name);
+
+        if (name.empty()) {
+            std::cout << "\n  No name entered. Returning to menu...";
+            _getch();
+            return;
+        }
+        PlayerModule::initPlayer(player, name);
+    }
+
+    // Materi: Exception Handling, load inventory sebelum berbelanja
+    try {
+        inventory = InventoryModule::loadInventory(player.name);
+    } catch (const FileException& e) {
+        std::cout << "\n  " << e.what() << "\n";
+    }
+
+    try {
+        ShopModule::runShop(player, inventory);
+    } catch (const FileException& e) {
+        std::cout << "\n  " << e.what() << "\n";
+        std::cout << "    Press any key to continue...";
+        _getch();
+    }
+
+    // Materi: Exception Handling, simpan inventory setelah berbelanja
+    try {
+        InventoryModule::saveInventory(player.name, inventory);
+    } catch (const FileException& e) {
+        std::cout << "\n  " << e.what() << "\n";
+        std::cout << "    Press any key to continue...";
+        _getch();
+    }
+}
 // ============================================================
 // Material: Function — Main real-time game loop
 // ============================================================
