@@ -8,6 +8,7 @@
 #include "enemy.h"
 #include "inventory.h"
 #include "shop.h"
+#include "trading.h"
 #include <vector>
 #include <list>
 #include <string>
@@ -31,6 +32,7 @@ private:
     void showControls();
     void showInventory();
     void showShop();
+    void showTrading();
 
     // --- Game loop functions ---
     void handleInput();
@@ -42,6 +44,7 @@ private:
 
     // --- State ---
     Player player;
+    Wallet wallet;                  // Material: Struct — wallet for trading
     std::vector<Item> inventory;    // Material: STL Vector - item yang dimiliki pemain
     std::vector<Bullet> bullets;    // Material: STL Vector
     std::list<Enemy> enemies;       // Material: STL List
