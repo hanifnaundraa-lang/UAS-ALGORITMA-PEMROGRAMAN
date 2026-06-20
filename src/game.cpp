@@ -42,9 +42,12 @@ void Game::run() {
                     showShop();
                     break;
                 case 4:
-                    showControls();
+                    showTrading();
                     break;
                 case 5:
+                    showControls();
+                    break;
+                case 6:
                     appRunning = false;
                     break;
                 default:
@@ -92,8 +95,9 @@ void Game::showMainMenu() {
     std::cout << "    [1] Start Game\n";
     std::cout << "    [2] Inventory\n";
     std::cout << "    [3] Shop\n";
-    std::cout << "    [4] Controls\n";
-    std::cout << "    [5] Exit\n";
+    std::cout << "    [4] Trading Market\n";
+    std::cout << "    [5] Controls\n";
+    std::cout << "    [6] Exit\n";
     std::cout << "\n    Enter your choice: ";
 }
 
@@ -222,6 +226,52 @@ void Game::showShop() {
         _getch();
     }
 }
+
+// ============================================================
+// Material: Function, File Handling — Trading screen
+// ============================================================
+void Game::showTrading() {
+    system("cls");
+
+    // Player must have a name before trading
+    if (player.name.empty()) {
+        std::cout << "\n  You need to enter a player name first.\n";
+        std::cout << "  Name: ";
+        std::string name;
+        std::getline(std::cin, name);
+
+        if (name.empty()) {
+            std::cout << "\n  No name entered. Returning to menu...";
+            _getch();
+            return;
+        }
+        PlayerModule::initPlayer(player, name);
+    }
+
+    // Material: File Handling — Load wallet from CSV
+    try {
+        wallet = TradingModule::loadWallet(player.name);
+    } catch (const std::exception& e) {
+        std::cout << "\n  " << e.what() << "\n";
+    }
+
+    // Sync coin from game to wallet (player earns coin from gameplay)
+    wallet.coin += player.coin;
+    player.coin = 0;
+
+    // Open trading menu
+    TradingModule::menuTrading(wallet);
+
+    // After trading, save wallet
+    try {
+        TradingModule::saveWallet(wallet);
+    } catch (const std::exception& e) {
+        std::cout << "\n  " << e.what() << "\n";
+        std::cout << "    Press any key to continue...";
+        _getch();
+    }
+}
+
 // ============================================================
 // Material: Function — Main real-time game loop
 // ============================================================

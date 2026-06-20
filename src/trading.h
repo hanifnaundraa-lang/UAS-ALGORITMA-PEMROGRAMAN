@@ -1,14 +1,31 @@
 #pragma once
 #include "gamedata.h"
-#include <vector>
+#include "gameconfig.h"
+#include "gameexception.h"
+#include <string>
 
-// Placeholder for Trading module — will be implemented by Member 4
+// Material: Namespace, Function — Trading module by Member 4
+// Simulated BTC trading market using in-game coin
 namespace TradingModule {
 
-    void displayMarket();
+    // --- Wallet Persistence ---
+    // Material: File Handling & Exception Handling
+    Wallet loadWallet(const std::string& playerName);
+    void saveWallet(const Wallet& wallet);
+
+    // --- BTC Price System ---
+    // Returns today's BTC price. Generates a new one if none exists for today.
+    int getCurrentBTCPrice();
+
+    // --- Trading Actions ---
     void displayWallet(const Wallet& wallet);
-    void buyBTC(Wallet& wallet, double amount, int price);
-    void sellBTC(Wallet& wallet, double amount, int price);
-    void history();
+    void displayMarket();
+    void buyBTC(Wallet& wallet);
+    void sellBTC(Wallet& wallet);
+    void showTradeHistory();
+
+    // --- Menu Entry Point ---
+    // Called from Game::showTrading()
+    void menuTrading(Wallet& wallet);
 
 } // namespace TradingModule

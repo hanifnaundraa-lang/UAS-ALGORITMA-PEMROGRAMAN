@@ -19,7 +19,7 @@ namespace GameConfig {
 
     // Scoring
     constexpr int SCORE_PER_ENEMY = 10;
-    constexpr int COIN_PER_ENEMY = 5;
+    constexpr int COIN_PER_ENEMY = 1000;
 
     // Symbols
     constexpr char PLAYER_SYMBOL = 'A';
