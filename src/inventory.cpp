@@ -59,12 +59,10 @@ namespace InventoryModule {
     // Hitung total jumlah yang dimiliki untuk itemId tertentu
     // ============================================================
     int countItem(const std::vector<Item>& inventory, int itemId) {
-        // Material: Lambda Expression, Count
-        int count = 0;
-        // Materi: std::count_if — menghitung item yang cocok
-        count = static_cast<int>(std::count_if(inventory.begin(), inventory.end(),
-            [&](const Item& existing) { return existing.id == itemId; }));
-        return count;
+        // Material: Lambda Expression, Find
+        auto it = std::find_if(inventory.begin(), inventory.end(),
+            [&](const Item& existing) { return existing.id == itemId; });
+        return (it != inventory.end()) ? it->quantity : 0;
     }
 
     // ============================================================

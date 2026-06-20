@@ -1,7 +1,15 @@
 playerName,itemId,itemName,type,price,effect,quantity
 fab,1,Health Potion,Consumable,1
-fabian,1,Health Potion,Consumable,30,heal:1,2
-fabian,2,Shield,Consumable,50,shield:1,4
-fabian,3,Double Bullet,Buff,70,doubleBullet,5
-fabian,4,Damage Boost,Buff,60,damageBoost,5
+god,1,Health Potion,Consumable,30,heal:1,99
+god,2,Shield,Buff,50,shield:1,99
+god,3,Double Bullet,Buff,70,doubleBullet,99
+god,4,Score Booster,Buff,60,scoreBoost,99
+god,5,Gacha Ticket,Currency,40,ticket:1,99
+god,6,Coin Booster,Buff,60,coinBoost,99
+fabian,2,Shield,Consumable,50,shield:1,3
+fabian,3,Double Bullet,Buff,70,doubleBullet,1
+fabian,4,Damage Boost,Buff,60,damageBoost,4
 fabian,5,Gacha Ticket,Currency,40,ticket:1,20
+fabian,6,Coin Booster,Buff,60,coinBoost,1
+fabian,1,Health Potion,Consumable,30,heal:1,8
+fabian,7,EMP Device,Buff,100,emp:2,4

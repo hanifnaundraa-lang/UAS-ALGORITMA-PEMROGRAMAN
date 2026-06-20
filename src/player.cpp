@@ -12,6 +12,7 @@ namespace PlayerModule {
         player.score = 0;
         player.coin = 0;
         player.destroyedEnemy = 0;
+        player.loadout = {0, false, false, false, false, false, 0, 0};
     }
 
     void moveLeft(Player& player) {
@@ -25,14 +26,26 @@ namespace PlayerModule {
 
     // Material: Default Argument
     void addScore(Player& player, int points) {
-        player.score += points;
+        if (player.loadout.scoreBoostActive) {
+            player.score += (points * 2);
+        } else {
+            player.score += points;
+        }
     }
 
     void addCoin(Player& player, int coins) {
-        player.coin += coins;
+        if (player.loadout.coinBoostActive) {
+            player.coin += (coins * 2);
+        } else {
+            player.coin += coins;
+        }
     }
 
     void takeDamage(Player& player, int damage) {
+        if (player.loadout.shieldActive) {
+            player.loadout.shieldActive = false; // Block damage
+            return;
+        }
         player.health -= damage;
         if (player.health < 0) player.health = 0;
     }

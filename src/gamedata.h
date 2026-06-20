@@ -9,6 +9,17 @@ struct Position {
     int y;
 };
 
+struct Loadout {
+    int healthPotionUsed;
+    bool shieldActive;
+    bool doubleBulletActive;
+    bool scoreBoostActive;
+    bool coinBoostActive;
+    bool empEquipped;
+    int empCharges;
+    int empTimer;
+};
+
 struct Player {
     std::string name;
     Position position;
@@ -16,6 +27,7 @@ struct Player {
     int score;
     int coin;
     int destroyedEnemy;
+    Loadout loadout;
 };
 
 struct Bullet {

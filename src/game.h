@@ -27,6 +27,7 @@ private:
     // --- Menu and flow ---
     void showMainMenu();
     void inputPlayerName();
+    void showLoadoutAndStart();
     void startGame();
     void showGameOver();
     void showControls();

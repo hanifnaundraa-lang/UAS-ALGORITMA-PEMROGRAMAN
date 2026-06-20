@@ -1,6 +1,8 @@
 id,name,type,price,effect,stock
-1,Health Potion,Consumable,30,heal:1,18
-2,Shield,Consumable,50,shield:1,11
-3,Double Bullet,Buff,70,doubleBullet,5
-4,Damage Boost,Buff,60,damageBoost,5
-5,Gacha Ticket,Currency,40,ticket:1,30
+1,Health Potion,Consumable,30,heal:1,20
+2,Shield,Buff,50,shield:1,15
+3,Double Bullet,Buff,70,doubleBullet,10
+4,Score Booster,Buff,60,scoreBoost,10
+5,Gacha Ticket,Currency,40,ticket:1,50
+6,Coin Booster,Buff,60,coinBoost,10
+7,EMP Device,Buff,100,emp:2,5
