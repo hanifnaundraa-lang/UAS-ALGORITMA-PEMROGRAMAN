@@ -37,6 +37,7 @@ struct Item {
     int price;
     std::string effect;     // untuk efek item, misal "heal", "damage boost", dll
     int quantity;
+    int stock;              // jumlah stok di shop, -1 = unlimited
 };
 
 struct PlayerScore {
