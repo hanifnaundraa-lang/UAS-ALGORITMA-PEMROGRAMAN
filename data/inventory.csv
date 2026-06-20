@@ -1,2 +1,7 @@
-playerName,itemId,itemName,type,quantity
+playerName,itemId,itemName,type,price,effect,quantity
 fab,1,Health Potion,Consumable,1
+fabian,1,Health Potion,Consumable,30,heal:1,2
+fabian,2,Shield,Consumable,50,shield:1,4
+fabian,3,Double Bullet,Buff,70,doubleBullet,5
+fabian,4,Damage Boost,Buff,60,damageBoost,5
+fabian,5,Gacha Ticket,Currency,40,ticket:1,20

@@ -176,9 +176,15 @@ void Game::showInventory() {
         std::cout << "\n  " << e.what() << "\n";
     }
 
-    InventoryModule::displayInventory(inventory);
-    std::cout << "    Press any key to return to Main Menu...";
-    _getch();
+    // Feature 6 & 7: Interactive inventory menu with search and filter
+    InventoryModule::runInventory(inventory, player.name);
+
+    // Save inventory setelah keluar dari menu
+    try {
+        InventoryModule::saveInventory(player.name, inventory);
+    } catch (const FileException& e) {
+        std::cout << "\n  " << e.what() << "\n";
+    }
 }
 
 // ============================================================
@@ -202,6 +208,17 @@ void Game::showShop() {
         PlayerModule::initPlayer(player, name);
     }
 
+    // Feature 1: Load wallet — Wallet is single source of truth for coin
+    try {
+        wallet = TradingModule::loadWallet(player.name);
+    } catch (const std::exception& e) {
+        std::cout << "\n  " << e.what() << "\n";
+    }
+
+    // Sync coin from gameplay to wallet
+    wallet.coin += player.coin;
+    player.coin = 0;
+
     // Materi: Exception Handling, load inventory sebelum berbelanja
     try {
         inventory = InventoryModule::loadInventory(player.name);
@@ -209,12 +226,20 @@ void Game::showShop() {
         std::cout << "\n  " << e.what() << "\n";
     }
 
+    // Feature 1: Shop now uses Wallet& instead of Player&
     try {
-        ShopModule::runShop(player, inventory);
+        ShopModule::runShop(wallet, inventory);
     } catch (const FileException& e) {
         std::cout << "\n  " << e.what() << "\n";
         std::cout << "    Press any key to continue...";
         _getch();
+    }
+
+    // Save wallet setelah berbelanja
+    try {
+        TradingModule::saveWallet(wallet);
+    } catch (const std::exception& e) {
+        std::cout << "\n  " << e.what() << "\n";
     }
 
     // Materi: Exception Handling, simpan inventory setelah berbelanja
