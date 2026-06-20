@@ -1,0 +1,31 @@
+# CMake
+build/
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps/
+
+# Build output
+*.exe
+*.obj
+*.o
+*.ilk
+*.pdb
+
+# IDE
+.vscode/
+.vs/
+*.user
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# MD
+AGENTS.md
