@@ -592,7 +592,8 @@ void Game::checkCollisions() {
         for (auto enemyIt = enemies.begin(); enemyIt != enemies.end(); ) {
             if (bulletIt->active && enemyIt->active &&
                 bulletIt->position.x == enemyIt->position.x &&
-                bulletIt->position.y == enemyIt->position.y) {
+                (bulletIt->position.y == enemyIt->position.y || 
+                 bulletIt->position.y == enemyIt->position.y - 1)) {
 
                 // Bullet hits enemy
                 bulletIt->active = false;
