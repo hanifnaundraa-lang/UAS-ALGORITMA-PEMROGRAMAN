@@ -7,3 +7,4 @@ day,playerName,type,asset,amount,price,total
 2026-06-20,fabian,SELL,BTC,0.2210,41256,9117
 2026-06-20,fabian,BUY,BTC,0.1000,31601,3160
 2026-06-20,fabian,BUY,BTC,0.0900,31601,2844
+2026-06-21,fabian,BUY,BTC,1.0000,50623,50623

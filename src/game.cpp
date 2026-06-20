@@ -32,8 +32,12 @@ void Game::run() {
 
             switch (choice) {
                 case 1:
-                    inputPlayerName();
-                    startGame();
+                    if (player.name.empty()) {
+                        inputPlayerName();
+                    } else {
+                        PlayerModule::initPlayer(player, player.name); // Reset stats for new run
+                    }
+                    showLoadoutAndStart();
                     break;
                 case 2:
                     showInventory();
@@ -123,6 +127,147 @@ void Game::inputPlayerName() {
 
     // Material: Struct & Reference — initialize player
     PlayerModule::initPlayer(player, name);
+}
+
+// ============================================================
+// Material: Function — Pre-game Loadout Menu (Buff Limit System)
+// ============================================================
+void Game::showLoadoutAndStart() {
+    try {
+        inventory = InventoryModule::loadInventory(player.name);
+    } catch (const FileException& e) {
+        std::cout << "\n  " << e.what() << "\n";
+    }
+
+    std::vector<Item> originalInventory = inventory; // Keep backup for unequip feature
+    int buffSlotsUsed = 0;
+    bool readyToStart = false;
+
+    while (!readyToStart) {
+        system("cls");
+        std::cout << "  ========================================\n";
+        std::cout << "                  LOADOUT                 \n";
+        std::cout << "  ========================================\n\n";
+        
+        std::cout << "  Inventory:\n";
+        int hpQty = InventoryModule::countItem(inventory, 1);
+        int shQty = InventoryModule::countItem(inventory, 2);
+        int dbQty = InventoryModule::countItem(inventory, 3);
+        int sbQty = InventoryModule::countItem(inventory, 4);
+        int cbQty = InventoryModule::countItem(inventory, 6);
+        int empQty = InventoryModule::countItem(inventory, 7);
+
+        std::cout << "  1. Health Potion x" << hpQty << "\n";
+        std::cout << "  2. Shield        x" << shQty << "\n";
+        std::cout << "  3. Double Bullet x" << dbQty << "\n";
+        std::cout << "  4. Score Booster x" << sbQty << "\n";
+        std::cout << "  5. Coin Booster  x" << cbQty << "\n";
+        std::cout << "  6. EMP Device    x" << empQty << "\n\n";
+
+        std::cout << "  Current Loadout:\n";
+        std::cout << "  Health Bonus : +" << player.loadout.healthPotionUsed << "\n";
+        std::cout << "  Shield       : " << (player.loadout.shieldActive ? "ON" : "OFF") << "\n";
+        std::cout << "  DoubleBullet : " << (player.loadout.doubleBulletActive ? "ON" : "OFF") << "\n";
+        std::cout << "  Score Boost  : " << (player.loadout.scoreBoostActive ? "ON" : "OFF") << "\n";
+        std::cout << "  Coin Boost   : " << (player.loadout.coinBoostActive ? "ON" : "OFF") << "\n";
+        std::cout << "  EMP Device   : " << (player.loadout.empEquipped ? "ON" : "OFF") << "\n";
+        std::cout << "  Buff Slots Used: " << buffSlotsUsed << " / 2\n\n";
+
+        std::cout << "  Options:\n";
+        std::cout << "  [1] Use Health Potion\n";
+        std::cout << "  [2] Equip Shield\n";
+        std::cout << "  [3] Equip Double Bullet\n";
+        std::cout << "  [4] Equip Score Booster\n";
+        std::cout << "  [5] Equip Coin Booster\n";
+        std::cout << "  [6] Equip EMP Device\n";
+        std::cout << "  [7] Start Mission\n";
+        std::cout << "  [0] Cancel & Back to Menu\n\n";
+
+        std::cout << "  Your choice: ";
+        char choice = _getch();
+        std::cout << choice << "\n\n";
+
+        if (choice == '0') {
+            inventory = InventoryModule::loadInventory(player.name); // Reload to discard unsaved consumption
+            return;
+        } else if (choice == '7') {
+            readyToStart = true;
+        } else if (choice == '1') {
+            if (hpQty > 0) {
+                if (player.loadout.healthPotionUsed < 2) { // Cap at 5 HP (Base 3 + 2 Potions)
+                    InventoryModule::removeItem(inventory, 1);
+                    player.loadout.healthPotionUsed++;
+                } else {
+                    std::cout << "  Max Health reached! (Cap at 5 HP). Press any key..."; _getch();
+                }
+            } else {
+                std::cout << "  Not enough Health Potions! Press any key..."; _getch();
+            }
+        } else if (choice >= '2' && choice <= '6') {
+            int itemId = 0;
+            bool* activeFlag = nullptr;
+            std::string itemName = "";
+            
+            if (choice == '2') { itemId = 2; activeFlag = &player.loadout.shieldActive; itemName = "Shield"; }
+            else if (choice == '3') { itemId = 3; activeFlag = &player.loadout.doubleBulletActive; itemName = "Double Bullet"; }
+            else if (choice == '4') { itemId = 4; activeFlag = &player.loadout.scoreBoostActive; itemName = "Score Booster"; }
+            else if (choice == '5') { itemId = 6; activeFlag = &player.loadout.coinBoostActive; itemName = "Coin Booster"; }
+            else if (choice == '6') { itemId = 7; activeFlag = &player.loadout.empEquipped; itemName = "EMP Device"; }
+
+            if (*activeFlag) {
+                std::cout << "  " << itemName << " is already equipped. Unequip? (y/n): ";
+                char unequipChoice = _getch();
+                std::cout << unequipChoice << "\n";
+                if (unequipChoice == 'y' || unequipChoice == 'Y') {
+                    *activeFlag = false;
+                    buffSlotsUsed--;
+                    
+                    Item* original = InventoryModule::findItem(originalInventory, itemId);
+                    if (original) {
+                        Item toReturn = *original;
+                        toReturn.quantity = 1;
+                        InventoryModule::addItem(inventory, toReturn);
+                        std::cout << "  " << itemName << " unequipped.\n";
+                    }
+                    std::cout << "  Press any key..."; _getch();
+                }
+            } else {
+                int qty = InventoryModule::countItem(inventory, itemId);
+                if (qty > 0) {
+                    if (buffSlotsUsed < 2) {
+                        InventoryModule::removeItem(inventory, itemId);
+                        *activeFlag = true;
+                        buffSlotsUsed++;
+                    } else {
+                        std::cout << "  Buff Limit Reached! Maximum 2 buffs allowed. Press any key..."; _getch();
+                    }
+                } else {
+                    std::cout << "  Not enough " << itemName << "! Press any key..."; _getch();
+                }
+            }
+        }
+    }
+
+    // Apply Health
+    player.health += player.loadout.healthPotionUsed;
+
+    // Apply EMP Charges
+    if (player.loadout.empEquipped) {
+        player.loadout.empCharges = 2; // Grant 2 charges for the mission
+        player.loadout.empTimer = 0;
+    }
+
+    // Save inventory permanently
+    try {
+        InventoryModule::saveInventory(player.name, inventory);
+    } catch (const FileException& e) {
+        std::cout << "\n  " << e.what() << "\n";
+        std::cout << "  Mission Aborted due to save failure. Press any key..."; _getch();
+        return; // Abort mission
+    }
+
+    // Start the real-time loop
+    startGame();
 }
 
 // ============================================================
@@ -316,6 +461,11 @@ void Game::startGame() {
     // Material: Game Loop Pattern
     while (isRunning) {
         if (!isPaused) {
+            // Update EMP Timer
+            if (player.loadout.empTimer > 0) {
+                player.loadout.empTimer--;
+            }
+
             handleInput();
             updateBullets();
             updateEnemies();
@@ -367,8 +517,25 @@ void Game::handleInput() {
                 break;
             case 'w': case 'W': case ' ':
                 if (!isPaused) {
-                    // Spawn bullet above the player
-                    BulletModule::spawnBullet(bullets, player.position.x, player.position.y - 1);
+                    if (player.loadout.doubleBulletActive) {
+                        int leftX = player.position.x - 1;
+                        int rightX = player.position.x + 1;
+                        // spawn left bullet
+                        if (leftX >= 0) BulletModule::spawnBullet(bullets, leftX, player.position.y - 1);
+                        else BulletModule::spawnBullet(bullets, rightX + 1, player.position.y - 1);
+                        
+                        // spawn right bullet
+                        if (rightX < GameConfig::ARENA_WIDTH) BulletModule::spawnBullet(bullets, rightX, player.position.y - 1);
+                        else BulletModule::spawnBullet(bullets, leftX - 1, player.position.y - 1);
+                    } else {
+                        BulletModule::spawnBullet(bullets, player.position.x, player.position.y - 1);
+                    }
+                }
+                break;
+            case 'e': case 'E':
+                if (!isPaused && player.loadout.empEquipped && player.loadout.empCharges > 0 && player.loadout.empTimer == 0) {
+                    player.loadout.empCharges--;
+                    player.loadout.empTimer = 100; // ~3 seconds of slow motion
                 }
                 break;
             case 'p': case 'P':
@@ -397,8 +564,9 @@ void Game::updateBullets() {
 // Material: STL List & Iterator — Update all enemies
 // ============================================================
 void Game::updateEnemies() {
-    // Only move enemies every N frames (slower movement)
-    if (frameCounter % GameConfig::ENEMY_MOVE_INTERVAL == 0) {
+    // Only move enemies every N frames (slower movement during EMP)
+    int enemySpeed = (player.loadout.empTimer > 0) ? 9 : GameConfig::ENEMY_MOVE_INTERVAL;
+    if (frameCounter % enemySpeed == 0) {
         EnemyModule::updateEnemies(enemies);
     }
 }
@@ -497,7 +665,14 @@ void Game::render() {
               << " | HP: " << player.health
               << " | Coin: " << std::setw(5) << player.coin
               << " | Destroyed: " << player.destroyedEnemy
-              << "        \n\n";
+              << "        \n";
+
+    if (player.loadout.empEquipped) {
+        std::cout << "  EMP Charges: " << player.loadout.empCharges << " / 2";
+        if (player.loadout.empTimer > 0) std::cout << "   [SLOW MOTION ACTIVE]";
+        std::cout << "                \n";
+    }
+    std::cout << "\n";
 
     // --- Top border ---
     std::cout << "  ";
@@ -550,7 +725,7 @@ void Game::render() {
     std::cout << "\n";
 
     // --- Controls hint ---
-    std::cout << "  [A/D] Move  [W/Space] Shoot  [P] Pause  [Q] Quit\n";
+    std::cout << "  [A/D] Move  [W/Space] Shoot  [E] EMP  [P] Pause  [Q] Quit\n";
 }
 
 // ============================================================
