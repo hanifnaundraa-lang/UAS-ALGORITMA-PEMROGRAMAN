@@ -52,6 +52,9 @@ void Game::run() {
                     showLeaderboard();
                     break;
                 case 6:
+                    showGacha();
+                    break;
+                case 7:
                     showControls();
                     break;
                 case 0:
@@ -104,7 +107,8 @@ void Game::showMainMenu() {
     std::cout << "    [3] Shop\n";
     std::cout << "    [4] Trading Market\n";
     std::cout << "    [5] Leaderboard\n";
-    std::cout << "    [6] Guide\n";
+    std::cout << "    [6] Gacha\n";
+    std::cout << "    [7] Guide\n";
     std::cout << "    [0] Exit\n";
     std::cout << "\n    Enter your choice: ";
 }
@@ -492,6 +496,47 @@ void Game::showLeaderboard() {
 
     std::cout << "    Press any key to return to Main Menu...";
     _getch();
+}
+
+// ============================================================
+// Material: Function, Exception Handling — Gacha screen
+// ============================================================
+void Game::showGacha() {
+    system("cls");
+
+    // Player must have a name before using gacha
+    if (player.name.empty()) {
+        std::cout << "\n  You need to enter a player name first.\n";
+        std::cout << "  Name: ";
+        std::string name;
+        std::getline(std::cin, name);
+
+        if (name.empty()) {
+            std::cout << "\n  No name entered. Returning to menu...";
+            _getch();
+            return;
+        }
+        PlayerModule::initPlayer(player, name);
+    }
+
+    // Material: Exception Handling — load inventory before gacha
+    try {
+        inventory = InventoryModule::loadInventory(player.name);
+    } catch (const FileException& e) {
+        std::cout << "\n  " << e.what() << "\n";
+    }
+
+    // Open gacha menu
+    GachaModule::runGachaMenu(inventory, player.name);
+
+    // Save inventory after gacha (already saved inside, but ensure consistency)
+    try {
+        InventoryModule::saveInventory(player.name, inventory);
+    } catch (const FileException& e) {
+        std::cout << "\n  " << e.what() << "\n";
+        std::cout << "    Press any key to continue...";
+        _getch();
+    }
 }
 
 // ============================================================

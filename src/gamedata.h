@@ -81,3 +81,20 @@ struct TradeRecord {
     int price;
     int total;
 };
+
+// Gacha reward pool entry (loaded from gacha_pool.csv)
+struct GachaReward {
+    int id;
+    std::string name;
+    std::string type;
+    std::string rarity;
+    int weight;
+};
+
+// Gacha history record (saved to gacha_history.csv)
+struct GachaRecord {
+    std::string date;
+    std::string playerName;
+    std::string reward;
+    std::string rarity;
+};
