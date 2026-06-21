@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <stdexcept>
+#include <conio.h>
 using namespace std;
 
 namespace ScoreManager {
@@ -75,41 +76,213 @@ namespace ScoreManager {
         return scores;
     }
 
-    void displayLeaderboard() {
-        vector<PlayerScore> scores = loadScores();
-
-        // Materi: Sort & Lambda Expression
-        sort(scores.begin(), scores.end(), [](const PlayerScore& a, const PlayerScore& b) {
-            return a.score > b.score; 
-        });
-
-        cout << "\n  ======================================================\n";
-        cout << "                       LEADERBOARD                      \n";
-        cout << "  ======================================================\n\n";
-
+    // ============================================================
+    // Feature: Display Leaderboard View (Rank Display)
+    // ============================================================
+    void displayLeaderboardView(vector<PlayerScore>& scores) {
         if (scores.empty()) {
             cout << "    (No high scores recorded yet. Play a game!)\n\n";
             return;
         }
 
-        cout << "    " << left << setw(15) << "Name"
+        cout << "    " << left << setw(6) << "Rank"
+             << setw(15) << "Name"
              << setw(10) << "Score"
              << setw(10) << "Enemies"
              << setw(20) << "Date" << "\n";
-        cout << "    ------------------------------------------------------\n";
+        cout << "    ------------------------------------------------------------\n";
 
-        // Display up to top 10 scores
         int rank = 1;
         for (const auto& s : scores) {
             if (rank > 10) break; 
             
-            cout << "    " << left << setw(15) << s.name
+            cout << "    #" << left << setw(5) << rank
+                 << setw(15) << s.name
                  << setw(10) << s.score
                  << setw(10) << s.destroyedEnemy
                  << setw(20) << s.dateTime << "\n";
             rank++;
         }
         cout << "\n";
+    }
+
+    // ============================================================
+    // Feature 1: Search Player
+    // ============================================================
+    void searchPlayer(const vector<PlayerScore>& scores) {
+        cout << "\n  Enter Player Name: ";
+        string target;
+        getline(cin, target);
+
+        string lowerTarget = target;
+        transform(lowerTarget.begin(), lowerTarget.end(), lowerTarget.begin(), ::tolower);
+        
+        // Material: Find & Lambda Expression
+        auto it = find_if(scores.begin(), scores.end(), [&](const PlayerScore& s) {
+            string lowerName = s.name;
+            transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::tolower);
+            return lowerName == lowerTarget;
+        });
+
+        if (it != scores.end()) {
+            int rank = distance(scores.begin(), it) + 1;
+            cout << "\n  Player Found\n\n";
+            cout << "  Name  : " << it->name << "\n";
+            cout << "  Rank  : " << rank << "\n";
+            cout << "  Score : " << it->score << "\n";
+        } else {
+            cout << "\n  Player not found.\n";
+        }
+    }
+
+    // ============================================================
+    // Feature 2: Statistics Menu
+    // ============================================================
+    void showStatistics(const vector<PlayerScore>& scores) {
+        cout << "\n  ===== LEADERBOARD STATS =====\n\n";
+        if (scores.empty()) {
+            cout << "  No data available.\n";
+            return;
+        }
+
+        vector<string> uniquePlayers;
+        int maxScore = 0;
+        int minScore = scores[0].score;
+        long long sumScore = 0;
+
+        // Material: Iterator
+        for (auto it = scores.begin(); it != scores.end(); ++it) {
+            string lowerName = it->name;
+            transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::tolower);
+            
+            if (find(uniquePlayers.begin(), uniquePlayers.end(), lowerName) == uniquePlayers.end()) {
+                uniquePlayers.push_back(lowerName);
+            }
+
+            if (it->score > maxScore) maxScore = it->score;
+            if (it->score < minScore) minScore = it->score;
+            sumScore += it->score;
+        }
+
+        int avgScore = (scores.size() > 0) ? (sumScore / scores.size()) : 0;
+
+        cout << "  Total Players : " << uniquePlayers.size() << "\n";
+        cout << "  Highest Score : " << maxScore << "\n";
+        cout << "  Lowest Score  : " << minScore << "\n";
+        cout << "  Average Score : " << avgScore << "\n";
+    }
+
+    // ============================================================
+    // Feature 3: Personal Best
+    // ============================================================
+    void showPersonalBest(const vector<PlayerScore>& scores) {
+        cout << "\n  Enter Player Name: ";
+        string target;
+        getline(cin, target);
+        string lowerTarget = target;
+        transform(lowerTarget.begin(), lowerTarget.end(), lowerTarget.begin(), ::tolower);
+
+        int bestScore = -1;
+        string actualName = "";
+
+        // Material: Count & Lambda Expression
+        int gamesPlayed = count_if(scores.begin(), scores.end(), [&](const PlayerScore& s) {
+            string lowerName = s.name;
+            transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::tolower);
+            if (lowerName == lowerTarget) {
+                if (s.score > bestScore) {
+                    bestScore = s.score;
+                    actualName = s.name;
+                }
+                return true;
+            }
+            return false;
+        });
+
+        if (gamesPlayed > 0) {
+            cout << "\n  ===== PERSONAL BEST =====\n\n";
+            cout << "  Player       : " << actualName << "\n";
+            cout << "  Best Score   : " << bestScore << "\n";
+            cout << "  Games Played : " << gamesPlayed << "\n";
+        } else {
+            cout << "\n  Player not found.\n";
+        }
+    }
+
+    // ============================================================
+    // Feature 5: Hall of Fame
+    // ============================================================
+    void showHallOfFame(const vector<PlayerScore>& scores) {
+        cout << "\n  ===== HALL OF FAME =====\n\n";
+        if (scores.empty()) {
+            cout << "  No records available.\n";
+            return;
+        }
+
+        auto best = scores.begin(); // already sorted descending
+
+        cout << "  ***  The Greatest Player of All Time  ***\n\n";
+        cout << "  Player : " << best->name << "\n";
+        cout << "  Score  : " << best->score << "\n";
+        cout << "  Date   : " << best->dateTime << "\n";
+    }
+
+    // ============================================================
+    // Main Leaderboard Menu Runner
+    // ============================================================
+    void runLeaderboardMenu() {
+        vector<PlayerScore> scores = loadScores();
+
+        // Sort globally once for accurate rank indexing
+        // Material: Sort & Lambda Expression
+        sort(scores.begin(), scores.end(), [](const PlayerScore& a, const PlayerScore& b) {
+            return a.score > b.score; 
+        });
+
+        bool inMenu = true;
+        while (inMenu) {
+            system("cls");
+            cout << "\n  ======================================================\n";
+            cout << "                       LEADERBOARD                      \n";
+            cout << "  ======================================================\n\n";
+            cout << "    1. View Leaderboard\n";
+            cout << "    2. Search Player\n";
+            cout << "    3. Statistics\n";
+            cout << "    4. Personal Best\n";
+            cout << "    5. Hall Of Fame\n";
+            cout << "    6. Back\n\n";
+            cout << "    Enter your choice: ";
+            
+            char choice = _getch();
+            cout << choice << "\n";
+            
+            system("cls");
+            
+            if (choice == '1') {
+                cout << "\n  ======================================================\n";
+                cout << "                       LEADERBOARD                      \n";
+                cout << "  ======================================================\n\n";
+                displayLeaderboardView(scores);
+            } else if (choice == '2') {
+                searchPlayer(scores);
+            } else if (choice == '3') {
+                showStatistics(scores);
+            } else if (choice == '4') {
+                showPersonalBest(scores);
+            } else if (choice == '5') {
+                showHallOfFame(scores);
+            } else if (choice == '6') {
+                inMenu = false;
+                continue;
+            } else {
+                cout << "\n  Invalid choice.\n";
+            }
+            
+            if (inMenu) {
+                cout << "\n  Press any key to return to Leaderboard Menu...\n";
+                _getch();
+            }
+        }
     }
 
 } // namespace ScoreManager

@@ -484,7 +484,7 @@ void Game::showLeaderboard() {
 
     // Materi: Exception Handling, loading leaderboard data safely
     try {
-        ScoreManager::displayLeaderboard();
+        ScoreManager::runLeaderboardMenu();
     } catch (const std::exception& e) {
         std::cout << "\n  An error occurred while loading the leaderboard:\n";
         std::cout << "  " << e.what() << "\n";
