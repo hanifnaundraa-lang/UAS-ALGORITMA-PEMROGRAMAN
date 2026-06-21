@@ -287,7 +287,7 @@ namespace ShopModule {
             system("cls");
             displayShop(catalog, wallet.coin);
 
-            std::cout << "    [1-5] Enter item ID to buy\n";
+            std::cout << "    [1-7] Enter item ID to buy\n";
             std::cout << "    [S]   Sort Options\n";
             std::cout << "    [0]   Back to Main Menu\n";
             std::cout << "\n    Your choice: ";

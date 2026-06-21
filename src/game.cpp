@@ -22,16 +22,15 @@ void Game::run() {
     // Material: Exception Handling
     try {
         bool appRunning = true;
+        char choice;
         while (appRunning) {
             showMainMenu();
 
-            // Wait for menu choice
-            int choice = 0;
-            std::cin >> choice;
-            std::cin.ignore(); // clear newline from buffer
+            choice = _getch();
+            std::cout << choice << "\n";
 
             switch (choice) {
-                case 1:
+                case '1':
                     if (player.name.empty()) {
                         inputPlayerName();
                     } else {
@@ -39,25 +38,25 @@ void Game::run() {
                     }
                     showLoadoutAndStart();
                     break;
-                case 2:
+                case '2':
                     showInventory();
                     break;
-                case 3:
+                case '3':
                     showShop();
                     break;
-                case 4:
+                case '4':
                     showTrading();
                     break;
-                case 5:
+                case '5':
                     showLeaderboard();
                     break;
-                case 6:
+                case '6':
                     showGacha();
                     break;
-                case 7:
+                case '7':
                     showControls();
                     break;
-                case 0:
+                case '0':
                     appRunning = false;
                     break;
                 default:
@@ -493,9 +492,6 @@ void Game::showLeaderboard() {
         std::cout << "\n  An error occurred while loading the leaderboard:\n";
         std::cout << "  " << e.what() << "\n";
     }
-
-    std::cout << "    Press any key to return to Main Menu...";
-    _getch();
 }
 
 // ============================================================
