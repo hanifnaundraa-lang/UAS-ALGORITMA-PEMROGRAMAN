@@ -12,7 +12,7 @@ namespace ScoreManager {
     // Load all scores from leaderboard CSV
     std::vector<PlayerScore> loadScores();
 
-    // Display leaderboard (sorted by score)
-    void displayLeaderboard();
+    // Run the interactive leaderboard menu
+    void runLeaderboardMenu();
 
 } // namespace ScoreManager
