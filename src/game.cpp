@@ -281,7 +281,7 @@ void Game::showControls() {
     system("cls");
     std::cout << "\n";
     std::cout << "  ========================================\n";
-    std::cout << "                GAME GUIDE                \n";
+    std::cout << "               PLAYING GUIDE               \n";
     std::cout << "  ========================================\n\n";
     std::cout << "    A / Left Arrow   = Move Left\n";
     std::cout << "    D / Right Arrow  = Move Right\n";
@@ -829,8 +829,10 @@ void Game::showGameOver() {
             currentRun.dateTime = ss.str();
 
             ScoreManager::saveScore(currentRun);
+        } catch (const std::exception& e) {
+            std::cerr << "Failed to save score: " << e.what() << std::endl;
         } catch (...) {
-            // Fails silently in the background
+            std::cerr << "An unknown error occurred while saving the score." << std::endl;
         }
     }
 
