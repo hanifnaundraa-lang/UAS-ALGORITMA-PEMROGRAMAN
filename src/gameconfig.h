@@ -40,4 +40,5 @@ namespace FileConfig {
     const std::string MARKET_HISTORY_FILE = DATA_DIR + "market_history.csv";
     const std::string TRADE_HISTORY_FILE = DATA_DIR + "trade_history.csv";
     const std::string SHOP_HISTORY_FILE = DATA_DIR + "shop_history.csv";
+    const std::string GACHA_HISTORY_FILE = DATA_DIR + "gacha_history.csv";
 }

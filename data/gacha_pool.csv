@@ -1,1 +1,9 @@
-id,name,type,rarity,dropRate
+id,name,type,rarity,weight
+1,Health Potion,Consumable,Common,40
+5,Gacha Ticket,Currency,Rare,15
+2,Shield,Buff,Rare,25
+4,Score Booster,Buff,Rare,20
+6,Coin Booster,Buff,Epic,10
+3,Double Bullet,Buff,Legendary,5
+7,EMP Device,Buff,Legendary,5
+8,Bitcoin,Crypto,Legendary,3

@@ -10,6 +10,7 @@
 #include "shop.h"
 #include "trading.h"
 #include "scoremanager.h"
+#include "gacha.h"
 #include <vector>
 #include <list>
 #include <string>
@@ -36,6 +37,7 @@ private:
     void showShop();
     void showTrading();
     void showLeaderboard();
+    void showGacha();
 
     // --- Game loop functions ---
     void handleInput();
