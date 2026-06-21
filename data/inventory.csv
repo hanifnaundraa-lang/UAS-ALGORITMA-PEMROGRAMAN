@@ -13,3 +13,5 @@ fabian,5,Gacha Ticket,Currency,40,ticket:1,20
 fabian,6,Coin Booster,Buff,60,coinBoost,1
 fabian,1,Health Potion,Consumable,30,heal:1,8
 fabian,7,EMP Device,Buff,100,emp:2,4
+raya,1,Health Potion,Consumable,30,heal:1,1
+raya,5,Gacha Ticket,Currency,40,ticket:1,1

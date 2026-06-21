@@ -49,9 +49,12 @@ void Game::run() {
                     showTrading();
                     break;
                 case 5:
-                    showControls();
+                    showLeaderboard();
                     break;
                 case 6:
+                    showControls();
+                    break;
+                case 0:
                     appRunning = false;
                     break;
                 default:
@@ -100,8 +103,9 @@ void Game::showMainMenu() {
     std::cout << "    [2] Inventory\n";
     std::cout << "    [3] Shop\n";
     std::cout << "    [4] Trading Market\n";
-    std::cout << "    [5] Controls\n";
-    std::cout << "    [6] Exit\n";
+    std::cout << "    [5] Leaderboard\n";
+    std::cout << "    [6] Guide\n";
+    std::cout << "    [0] Exit\n";
     std::cout << "\n    Enter your choice: ";
 }
 
@@ -277,7 +281,7 @@ void Game::showControls() {
     system("cls");
     std::cout << "\n";
     std::cout << "  ========================================\n";
-    std::cout << "               GAME CONTROLS              \n";
+    std::cout << "                GAME GUIDE                \n";
     std::cout << "  ========================================\n\n";
     std::cout << "    A / Left Arrow   = Move Left\n";
     std::cout << "    D / Right Arrow  = Move Right\n";
@@ -289,6 +293,36 @@ void Game::showControls() {
     std::cout << "      " << GameConfig::BULLET_SYMBOL << " = Bullet\n";
     std::cout << "      " << GameConfig::ENEMY_SYMBOL  << " = Enemy\n";
     std::cout << "      " << GameConfig::BORDER_SYMBOL  << " = Border\n\n";
+
+    std::cout << "\n";
+    std::cout << "  =============================================================\n";
+    std::cout << "                         ITEM SHOP GUIDE                       \n";
+    std::cout << "  =============================================================\n\n";
+    std::cout << "    Loadout Rules:\n";
+    std::cout << "      - You can bring MAX 2 active buffs per mission.\n";
+    std::cout << "      - Health Potions do not consume buff slots.\n\n";
+    std::cout << "    Available Items:\n";
+    std::cout << "      [1] Health Potion : Max +2 HP per run (Cap at 5 HP)\n";
+    std::cout << "      [2] Shield        : Blocks 1 hit from an enemy\n";
+    std::cout << "      [3] Double Bullet : Fires 2 parallel side-projectiles\n";
+    std::cout << "      [4] Score Booster : Doubles points earned from kills\n";
+    std::cout << "      [6] Coin Booster  : Doubles coins dropped by enemies\n";
+    std::cout << "      [7] EMP Device    : Grants 2 active charges [Key: E]\n";
+    std::cout << "                          Triggers 3 sec of Slow Motion\n\n";
+    
+    std::cout << "\n";
+    std::cout << "  =============================================================\n";
+    std::cout << "                      TRADING MARKET GUIDE                     \n";
+    std::cout << "  =============================================================\n\n";
+    std::cout << "    Market Mechanics:\n";
+    std::cout << "      - Use your hard-earned gameplay coins to trade BTC.\n";
+    std::cout << "      - BTC prices fluctuate dynamically every calendar day.\n";
+    std::cout << "      - Price Range: 30,000 to 70,000 coins per BTC.\n\n";
+    std::cout << "    Trading Strategies:\n";
+    std::cout << "      - Buy Low  : Accumulate BTC when price trends near 30k.\n";
+    std::cout << "      - Sell High: Liquidate BTC when price approaches 70k.\n";
+    std::cout << "      - History  : Check Option [5] to audit your trade logs.\n\n";
+    std::cout << "    * Note: Fractional BTC buys (e.g., 0.1) are fully supported.\n\n";
     std::cout << "    Press any key to return to menu...";
     _getch();
 }
@@ -440,6 +474,24 @@ void Game::showTrading() {
         std::cout << "    Press any key to continue...";
         _getch();
     }
+}
+
+// ============================================================
+// Materi: Function, Exception Handling (Leaderboard screen)
+// ============================================================
+void Game::showLeaderboard() {
+    system("cls");
+
+    // Materi: Exception Handling, loading leaderboard data safely
+    try {
+        ScoreManager::displayLeaderboard();
+    } catch (const std::exception& e) {
+        std::cout << "\n  An error occurred while loading the leaderboard:\n";
+        std::cout << "  " << e.what() << "\n";
+    }
+
+    std::cout << "    Press any key to return to Main Menu...";
+    _getch();
 }
 
 // ============================================================
@@ -747,14 +799,40 @@ void Game::showGameOver() {
     for (int i = 0; i < totalWidth; ++i) std::cout << "=";
     std::cout << "\n\n";
 
-    std::cout << "    Player:          " << player.name << "\n";
-    std::cout << "    Final Score:     " << player.score << "\n";
-    std::cout << "    Coin Earned:     " << player.coin << "\n";
-    std::cout << "    Enemies Destroyed: " << player.destroyedEnemy << "\n\n";
+    std::cout << "    Player            : " << player.name << "\n";
+    std::cout << "    Final Score       : " << player.score << "\n";
+    std::cout << "    Coin Earned       : " << player.coin << "\n";
+    std::cout << "    Enemies Destroyed : " << player.destroyedEnemy << "\n\n";
 
     std::cout << "  ";
     for (int i = 0; i < totalWidth; ++i) std::cout << "-";
     std::cout << "\n\n";
+
+    if (!player.name.empty() && player.score > 0) {
+        try {
+            PlayerScore currentRun; 
+            currentRun.name = player.name;
+            currentRun.score = player.score;
+            currentRun.destroyedEnemy = player.destroyedEnemy;
+
+            // Get current system time
+            std::time_t now = std::time(nullptr);
+            std::tm* ltm = std::localtime(&now);
+
+            // Format the time into dd/mm/yyyy using a stringstream
+            std::stringstream ss;
+            ss << std::setfill('0') 
+               << std::setw(2) << ltm->tm_mday << "/"
+               << std::setw(2) << (ltm->tm_mon + 1) << "/"
+               << (ltm->tm_year + 1900);
+
+            currentRun.dateTime = ss.str();
+
+            ScoreManager::saveScore(currentRun);
+        } catch (...) {
+            // Fails silently in the background
+        }
+    }
 
     std::cout << "    Press any key to return to Main Menu...";
     _getch();

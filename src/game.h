@@ -9,6 +9,7 @@
 #include "inventory.h"
 #include "shop.h"
 #include "trading.h"
+#include "scoremanager.h"
 #include <vector>
 #include <list>
 #include <string>
@@ -34,6 +35,7 @@ private:
     void showInventory();
     void showShop();
     void showTrading();
+    void showLeaderboard();
 
     // --- Game loop functions ---
     void handleInput();
