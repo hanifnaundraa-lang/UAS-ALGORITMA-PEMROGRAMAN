@@ -1,9 +1,20 @@
+/*==================================================
+  MODUL : main.cpp
+  FUNGSI:
+  - Entry point aplikasi
+==================================================*/
 #include "game.h"
 #include <iostream>
 
-// Material: Function — Program entry point
+/*==================================================
+  MATERI: Function
+  Titik awal eksekusi program.
+==================================================*/
 int main() {
-    // Material: Exception Handling
+    /*==================================================
+      MATERI: Exception Handling
+      Menangkap error fatal saat program berjalan.
+    ==================================================*/
     try {
         Game game;
         game.run();

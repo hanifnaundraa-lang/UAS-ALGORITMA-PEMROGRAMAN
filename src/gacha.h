@@ -3,25 +3,33 @@
 #include <vector>
 #include <string>
 
-// Material: Namespace, Function, STL Vector, Iterator, Sort, Find, Count, Lambda, File Handling, Exception Handling
-// Gacha module — weighted random pull system with history and statistics
+/*==================================================
+  MATERI: NAMESPACE, FUNCTION, STL VECTOR, ITERATOR, SORT, FIND, COUNT, LAMBDA, FILE HANDLING, EXCEPTION HANDLING
+==================================================*/
+/*==================================================
+  MODUL GACHA MENANGANI SISTEM ACAK BERBOBOT UNTUK UNDIAN ITEM BESERTA PENCATATAN RIWAYAT DAN STATISTIK.
+==================================================*/
 namespace GachaModule {
 
-    // --- Pool Loading ---
-    // Material: File Handling, Exception Handling, STL Vector
+    /*==================================================
+      MATERI: FILE HANDLING, EXCEPTION HANDLING, STL VECTOR - PEMUATAN KOLEKSI HADIAH UNDIAN.
+    ==================================================*/
     std::vector<GachaReward> loadPool();
 
-    // --- Core Pull Logic ---
-    // Material: Lambda Expression, STL Vector, Iterator
+    /*==================================================
+      MATERI: LAMBDA EXPRESSION, STL VECTOR, ITERATOR - LOGIKA EKSEKUSI PENARIKAN GACHA.
+    ==================================================*/
     GachaReward rollOnce(const std::vector<GachaReward>& pool);
 
-    // --- History ---
-    // Material: File Handling, Exception Handling
+    /*==================================================
+      MATERI: FILE HANDLING, EXCEPTION HANDLING - PENCATATAN DAN PEMBACAAN REKAMAN RIWAYAT GACHA.
+    ==================================================*/
     void saveHistory(const std::string& playerName, const GachaReward& reward);
     std::vector<GachaRecord> loadHistory(const std::string& playerName);
 
-    // --- Interactive Menu ---
-    // Material: Function, STL Vector, Count, Find, Sort, Lambda
+    /*==================================================
+      MATERI: FUNCTION, STL VECTOR, COUNT, FIND, SORT, LAMBDA - MENU INTERAKTIF MODUL GACHA.
+    ==================================================*/
     void runGachaMenu(std::vector<Item>& inventory, const std::string& playerName);
 
 } // namespace GachaModule

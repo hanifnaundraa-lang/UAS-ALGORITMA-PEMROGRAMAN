@@ -13,19 +13,23 @@
 #include <conio.h>
 #include <numeric>
 
-// Material: Function, Namespace, STL Vector, Iterator, Sort, Find, Count, Lambda, File Handling, Exception Handling
+/*==================================================
+  MATERI: FUNCTION, NAMESPACE, STL VECTOR, ITERATOR, SORT, FIND, COUNT, LAMBDA, FILE HANDLING, EXCEPTION HANDLING
+==================================================*/
 
 namespace GachaModule {
 
     // ============================================================
-    // Material: File Handling, Exception Handling — Load reward pool from CSV
+    /*==================================================
+      MATERI: FILE HANDLING, EXCEPTION HANDLING - MEMBACA DATA PELUANG ITEM GACHA DARI CSV.
+    ==================================================*/
     // ============================================================
     std::vector<GachaReward> loadPool() {
         std::vector<GachaReward> pool;
         std::ifstream inFile(FileConfig::GACHA_POOL_FILE);
 
         if (!inFile.is_open()) {
-            return pool; // Return empty pool if file missing
+            return pool; // LEVEL 3: Jika file hilang maka dikembalikan isi yang kosong.
         }
 
         std::string line;
@@ -35,7 +39,9 @@ namespace GachaModule {
             if (line.empty()) continue;
             if (isHeader) { isHeader = false; continue; }
 
-            // Material: Exception Handling — skip corrupted rows
+            /*==================================================
+              MATERI: EXCEPTION HANDLING - MENANGANI FORMAT BARIS YANG MUNGKIN TIDAK SESUAI SKEMA.
+            ==================================================*/
             try {
                 std::stringstream ss(line);
                 std::string idStr, name, type, rarity, weightStr;
@@ -54,7 +60,7 @@ namespace GachaModule {
                 reward.weight = std::stoi(weightStr);
                 pool.push_back(reward);
             } catch (...) {
-                continue; // Skip invalid rows
+                continue; // LEVEL 3: Melewati baris yang tidak valid.
             }
         }
 
@@ -63,16 +69,20 @@ namespace GachaModule {
     }
 
     // ============================================================
-    // Material: Lambda, STL Vector, Iterator — Weighted random roll
+    /*==================================================
+      MATERI: LAMBDA, STL VECTOR, ITERATOR - EKSEKUSI LOGIKA PROBABILITAS BERBOBOT SECARA ACAK.
+    ==================================================*/
     // ============================================================
     GachaReward rollOnce(const std::vector<GachaReward>& pool) {
-        // Material: Lambda Expression — calculate total weight
+        /*==================================================
+          MATERI: LAMBDA EXPRESSION - MENGALKULASI BATAS ATAS AKUMULASI BOBOT (WEIGHT).
+        ==================================================*/
         int totalWeight = 0;
         std::for_each(pool.begin(), pool.end(), [&](const GachaReward& r) {
             if (r.weight > 0) totalWeight += r.weight;
         });
 
-        // Prevent division by zero if all weights are 0 or negative
+        // Mengamankan kode dari error membagi bilangan dengan nilai nol.
         if (totalWeight <= 0) {
             return pool.front();
         }
@@ -80,7 +90,9 @@ namespace GachaModule {
         int roll = std::rand() % totalWeight;
         int cumulative = 0;
 
-        // Material: Iterator — walk through pool with cumulative weight
+        /*==================================================
+          MATERI: ITERATOR - MENYUSURI SATU PER SATU KEMUNGKINAN PELUANG TERHADAP ANGKA ACAK.
+        ==================================================*/
         for (auto it = pool.begin(); it != pool.end(); ++it) {
             if (it->weight <= 0) continue;
             cumulative += it->weight;
@@ -89,12 +101,14 @@ namespace GachaModule {
             }
         }
 
-        // Fallback (should never happen)
+        // Pilihan pengaman jika secara logika eksekusi terlewat, kemungkinan tidak akan terjadi.
         return pool.back();
     }
 
     // ============================================================
-    // Material: File Handling — Get current date as string
+    /*==================================================
+      MATERI: FILE HANDLING - KONVERSI WAKTU SAAT INI MENJADI BARIS STRING FORMAT TANGGAL.
+    ==================================================*/
     // ============================================================
     std::string getCurrentDate() {
         std::time_t now = std::time(nullptr);
@@ -105,10 +119,12 @@ namespace GachaModule {
     }
 
     // ============================================================
-    // Material: File Handling, Exception Handling — Save history record
+    /*==================================================
+      MATERI: FILE HANDLING, EXCEPTION HANDLING - PENCATATAN PENARIKAN SUKSES KE CATATAN RIWAYAT (CSV).
+    ==================================================*/
     // ============================================================
     void saveHistory(const std::string& playerName, const GachaReward& reward) {
-        // Check if file exists, if not create with header
+        // Mengetes keberadaan file guna menambahkan judul kolom (header) saat pertama kali dibuat.
         bool fileExists = false;
         {
             std::ifstream check(FileConfig::GACHA_HISTORY_FILE);
@@ -135,7 +151,9 @@ namespace GachaModule {
     }
 
     // ============================================================
-    // Material: File Handling, Exception Handling, STL Vector — Load history
+    /*==================================================
+      MATERI: FILE HANDLING, EXCEPTION HANDLING, STL VECTOR - MEMBACA DATA HISTORY PER PEMAIN.
+    ==================================================*/
     // ============================================================
     std::vector<GachaRecord> loadHistory(const std::string& playerName) {
         std::vector<GachaRecord> records;
@@ -174,7 +192,7 @@ namespace GachaModule {
     }
 
     // ============================================================
-    // Convert GachaReward to Item for InventoryModule integration
+    // Mengonversi struktur GachaReward agar kompatibel masuk ke struct Item pada inventory.
     // ============================================================
     Item rewardToItem(const GachaReward& reward) {
         Item item;
@@ -189,11 +207,13 @@ namespace GachaModule {
     }
 
     // ============================================================
-    // Feature: Single Pull (1 Ticket)
+    // Penarikan acak tipe satu tiket (Single Pull).
     // ============================================================
     void singlePull(const std::vector<GachaReward>& pool, std::vector<Item>& inventory,
                     const std::string& playerName) {
-        // Material: Find & Lambda — check ticket count
+        /*==================================================
+          MATERI: FIND, LAMBDA - VERIFIKASI PERSEDIAAN GACHA TICKET PEMAIN PADA INVENTORY.
+        ==================================================*/
         int ticketCount = InventoryModule::countItem(inventory, 5); // ID 5 = Gacha Ticket
 
         if (ticketCount < 1) {
@@ -201,14 +221,14 @@ namespace GachaModule {
             return;
         }
 
-        // Deduct 1 ticket
+        // Mengurangi jumlah tiket pemain sebanyak satu keping.
         InventoryModule::removeItem(inventory, 5);
 
-        // Roll
+        // Menjalankan eksekusi penarikan peluang item.
         GachaReward reward = rollOnce(pool);
         std::string finalRewardName = reward.name;
 
-        // Custom intercept for Bitcoin
+        // Kasus pengecualian jika item yang didapat adalah bitcoin yang dihitung secara desimal.
         if (reward.type == "Crypto" && reward.name == "Bitcoin") {
             double btcDrop = 0.01 + (std::rand() % 10) / 100.0;
             
@@ -224,12 +244,14 @@ namespace GachaModule {
                 std::cout << "\n  [Wallet Error] " << e.what() << "\n";
             }
         } else {
-            // Material: STL Vector — add reward to inventory
+            /*==================================================
+              MATERI: STL VECTOR - MENYISIPKAN REKAMAN ITEM BARU MASUK KE KANTONG (INVENTORY).
+            ==================================================*/
             Item rewardItem = rewardToItem(reward);
             InventoryModule::addItem(inventory, rewardItem);
         }
 
-        // Display result
+        // Menampilkan pengumuman keberhasilan mendapat item.
         std::cout << "\n  ======================================================\n";
         std::cout << "                     GACHA RESULT                       \n";
         std::cout << "  ======================================================\n\n";
@@ -237,7 +259,7 @@ namespace GachaModule {
         std::cout << "  Reward  : " << finalRewardName << "\n";
         std::cout << "  Rarity  : " << reward.rarity << "\n";
 
-        // Save history with exact formatted name
+        // Menambahkan entri keberhasilan penarikan pada file riwayat (history).
         GachaReward historyReward = reward;
         historyReward.name = finalRewardName;
         
@@ -247,7 +269,9 @@ namespace GachaModule {
             std::cout << "\n  Warning: " << e.what() << "\n";
         }
 
-        // Material: File Handling — save inventory immediately
+        /*==================================================
+          MATERI: FILE HANDLING - MEMASTIKAN PENYIMPANAN FILE INVENTORY SETELAHNYA AGAR DATA AMAN.
+        ==================================================*/
         try {
             InventoryModule::saveInventory(playerName, inventory);
         } catch (const std::exception& e) {
@@ -256,7 +280,7 @@ namespace GachaModule {
     }
 
     // ============================================================
-    // Feature: Multi Pull (5 Tickets)
+    // Penarikan multi sekaligus memakai 5 tiket gacha berturut-turut.
     // ============================================================
     void multiPull(const std::vector<GachaReward>& pool, std::vector<Item>& inventory,
                    const std::string& playerName) {
@@ -268,7 +292,7 @@ namespace GachaModule {
             return;
         }
 
-        // Deduct 5 tickets
+        // Mengurangi sebanyak lima keping tiket sekaligus.
         for (int i = 0; i < 5; ++i) {
             InventoryModule::removeItem(inventory, 5);
         }
@@ -277,7 +301,7 @@ namespace GachaModule {
         std::cout << "                  MULTI PULL RESULT (x5)                \n";
         std::cout << "  ======================================================\n\n";
 
-        // Roll 5 times
+        // Iterasi mendapatkan sebanyak lima buah peluang secara acak.
         for (int i = 0; i < 5; ++i) {
             GachaReward reward = rollOnce(pool);
             std::string finalRewardName = reward.name;
@@ -302,7 +326,7 @@ namespace GachaModule {
             std::cout << "  " << (i + 1) << ". " << std::left << std::setw(24)
                       << finalRewardName << "(" << reward.rarity << ")\n";
 
-            // Log history
+            // Menulis jejak untuk item yang baru saja diperoleh dari sistem ini.
             GachaReward historyReward = reward;
             historyReward.name = finalRewardName;
             try {
@@ -310,7 +334,7 @@ namespace GachaModule {
             } catch (...) {}
         }
 
-        // Save inventory once after all pulls
+        // Perbarui data inventory secara global setelah kelima peluang dihitung.
         try {
             InventoryModule::saveInventory(playerName, inventory);
         } catch (const std::exception& e) {
@@ -319,8 +343,9 @@ namespace GachaModule {
     }
 
     // ============================================================
-    // Feature: View Gacha History
-    // Material: STL Vector, Iterator
+    /*==================================================
+      MATERI: STL VECTOR, ITERATOR - TAMPILAN UNTUK MEMBACA RIWAYAT PEROLEHAN GACHA.
+    ==================================================*/
     // ============================================================
     void viewHistory(const std::string& playerName) {
         std::vector<GachaRecord> records = loadHistory(playerName);
@@ -339,7 +364,9 @@ namespace GachaModule {
                   << std::setw(12) << "Rarity" << "\n";
         std::cout << "  --------------------------------------------------\n";
 
-        // Material: Iterator — display all records
+        /*==================================================
+          MATERI: ITERATOR - MENGEKSTRAKSI DAN MENCETAK MASING-MASING REKAMAN PEMAIN KE LAYAR KONSOL.
+        ==================================================*/
         for (auto it = records.begin(); it != records.end(); ++it) {
             std::cout << "  " << std::left << std::setw(14) << it->date
                       << std::setw(24) << it->reward
@@ -350,8 +377,9 @@ namespace GachaModule {
     }
 
     // ============================================================
-    // Feature: Gacha Statistics
-    // Material: Count, Lambda Expression, STL Vector
+    /*==================================================
+      MATERI: COUNT, LAMBDA EXPRESSION, STL VECTOR - AGREGASI DATA STATISTIK HASIL UNDIAN PEMAIN.
+    ==================================================*/
     // ============================================================
     void viewStatistics(const std::string& playerName) {
         std::vector<GachaRecord> records = loadHistory(playerName);
@@ -365,7 +393,7 @@ namespace GachaModule {
             return;
         }
 
-        // Helper lambda for case-insensitive counting
+        // Fungsi anonim dalam blok untuk kemudahan iterasi hitung yang adaptif walau ada kombinasi kapital atau tidak pada kata pencarian.
         auto countRarity = [&](const std::string& target) {
             std::string lowerTarget = target;
             std::transform(lowerTarget.begin(), lowerTarget.end(), lowerTarget.begin(), ::tolower);
@@ -390,8 +418,9 @@ namespace GachaModule {
     }
 
     // ============================================================
-    // Feature: View Reward Pool
-    // Material: STL Vector, Sort, Lambda, Iterator
+    /*==================================================
+      MATERI: STL VECTOR, SORT, LAMBDA, ITERATOR - MEMBUKA TABEL TINGKAT KESULITAN GACHA.
+    ==================================================*/
     // ============================================================
     void viewRewardPool(const std::vector<GachaReward>& pool) {
         std::cout << "\n  ======================================================\n";
@@ -403,7 +432,9 @@ namespace GachaModule {
             return;
         }
 
-        // Material: Sort & Lambda — sort by weight descending for display
+        /*==================================================
+          MATERI: SORT, LAMBDA - URUTKAN TABEL DARI YANG TERBANYAK MUNCUL KE YANG LANGKA AGAR LEBIH MENARIK DIPANDANG.
+        ==================================================*/
         std::vector<GachaReward> sorted = pool;
         std::sort(sorted.begin(), sorted.end(), [](const GachaReward& a, const GachaReward& b) {
             return a.weight > b.weight;
@@ -423,11 +454,14 @@ namespace GachaModule {
     }
 
     // ============================================================
-    // Main Gacha Menu Runner
-    // Material: Function, Exception Handling
+    /*==================================================
+      MATERI: FUNCTION, EXCEPTION HANDLING - KONFIGURASI ANTAR MUKA CLI MENU GACHA YANG DAPAT DISAJIKAN KEPADA PEMAIN.
+    ==================================================*/
     // ============================================================
     void runGachaMenu(std::vector<Item>& inventory, const std::string& playerName) {
-        // Material: Exception Handling — load pool safely
+        /*==================================================
+          MATERI: EXCEPTION HANDLING - MEMASTIKAN TABEL PROBABILITAS SUKSES DIMUAT SECARA AMAN ATAU MEMBERITAHU KE LAYAR BILA EROR MEMUAT FILE TSB TERJADI SECARA GRACEFULLY.
+        ==================================================*/
         std::vector<GachaReward> pool;
         try {
             pool = loadPool();
@@ -449,7 +483,9 @@ namespace GachaModule {
         while (inMenu) {
             system("cls");
 
-            // Material: Find & Lambda — get current ticket count
+            /*==================================================
+              MATERI: FIND, LAMBDA - MENDETEKSI ITEM NOMOR ID=5 (TIKET GACHA).
+            ==================================================*/
             int tickets = InventoryModule::countItem(inventory, 5);
 
             std::cout << "\n  ======================================================\n";

@@ -1,3 +1,8 @@
+/*==================================================
+  MODUL : game.cpp
+  FUNGSI:
+  - Implementasi utama Game Loop
+==================================================*/
 #include "game.h"
 #include <iostream>
 #include <conio.h>
@@ -7,19 +12,25 @@
 #include <sstream>
 #include <iomanip>
 
-// Material: Function, STL Vector & List, Iterator, Struct, Pointer & Reference
-
+/*==================================================
+  MATERI: Function, STL Vector & List, Iterator, Struct, Pointer & Reference
+  Implementasi berbagai fitur dasar algoritma dan struktur data dalam game.
+==================================================*/
 Game::Game()
     : isRunning(false), isPaused(false), frameCounter(0) {
     // Seed random number generator once
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 }
 
-// ============================================================
-// Material: Function — Main application entry
-// ============================================================
+/*==================================================
+  MATERI: Function
+  Fungsi utama untuk menjalankan aplikasi dan menampilkan menu.
+==================================================*/
 void Game::run() {
-    // Material: Exception Handling
+    /*==================================================
+      MATERI: Exception Handling
+      Menangkap exception agar game tidak crash mendadak.
+    ==================================================*/
     try {
         bool appRunning = true;
         while (appRunning) {
@@ -81,9 +92,10 @@ void Game::run() {
     }
 }
 
-// ============================================================
-// Material: Function — Show main menu
-// ============================================================
+/*==================================================
+  MATERI: Function
+  Menampilkan menu utama ke layar terminal.
+==================================================*/
 void Game::showMainMenu() {
     system("cls");
     GameUtils::setCursorVisible(true);
@@ -113,9 +125,10 @@ void Game::showMainMenu() {
     std::cout << "\n    Enter your choice: ";
 }
 
-// ============================================================
-// Material: Function, Exception Handling — Input player name
-// ============================================================
+/*==================================================
+  MATERI: Function, Exception Handling
+  Meminta input nama pemain dan memvalidasi exception jika kosong.
+==================================================*/
 void Game::inputPlayerName() {
     system("cls");
     GameUtils::setCursorVisible(true);
@@ -128,18 +141,25 @@ void Game::inputPlayerName() {
     std::string name;
     std::getline(std::cin, name);
 
-    // Material: Exception Handling — validate input
+    /*==================================================
+      MATERI: Exception Handling
+      Memvalidasi input kosong dan melempar exception.
+    ==================================================*/
     if (name.empty()) {
         throw InputException("Player name cannot be empty.");
     }
 
-    // Material: Struct & Reference — initialize player
+    /*==================================================
+      MATERI: Struct & Reference
+      Menginisialisasi state player dengan melewatkan referensi struct.
+    ==================================================*/
     PlayerModule::initPlayer(player, name);
 }
 
-// ============================================================
-// Material: Function — Pre-game Loadout Menu (Buff Limit System)
-// ============================================================
+/*==================================================
+  MATERI: Function
+  Menu persiapan sebelum bermain untuk mengatur buff dan item.
+==================================================*/
 void Game::showLoadoutAndStart() {
     try {
         inventory = InventoryModule::loadInventory(player.name);
@@ -331,9 +351,10 @@ void Game::showControls() {
     _getch();
 }
 
-// ============================================================
-// Materi: Function, Exception Handling (Inventory screen)
-// ============================================================
+/*==================================================
+  MATERI: Function, Exception Handling
+  Menampilkan inventory pemain dan memuat file dengan penanganan error.
+==================================================*/
 void Game::showInventory() {
     system("cls");
 
@@ -352,7 +373,10 @@ void Game::showInventory() {
         PlayerModule::initPlayer(player, name);
     }
 
-    // Material: Exception Handling, loading inventory tidak boleh gagal
+    /*==================================================
+      MATERI: Exception Handling
+      Memuat inventory dengan block try-catch untuk mencegah gagal muat.
+    ==================================================*/
     try {
         inventory = InventoryModule::loadInventory(player.name);
     } catch (const FileException& e) {
@@ -370,9 +394,10 @@ void Game::showInventory() {
     }
 }
 
-// ============================================================
-// Materi: Function, Exception Handling (Shop screen)
-// ============================================================
+/*==================================================
+  MATERI: Function, Exception Handling
+  Menampilkan toko item dan melakukan inisialisasi awal.
+==================================================*/
 void Game::showShop() {
     system("cls");
 
@@ -402,7 +427,10 @@ void Game::showShop() {
     wallet.coin += player.coin;
     player.coin = 0;
 
-    // Materi: Exception Handling, load inventory sebelum berbelanja
+    /*==================================================
+      MATERI: Exception Handling
+      Load file inventory sebelum masuk menu berbelanja.
+    ==================================================*/
     try {
         inventory = InventoryModule::loadInventory(player.name);
     } catch (const FileException& e) {
@@ -425,7 +453,10 @@ void Game::showShop() {
         std::cout << "\n  " << e.what() << "\n";
     }
 
-    // Materi: Exception Handling, simpan inventory setelah berbelanja
+    /*==================================================
+      MATERI: Exception Handling
+      Menyimpan inventory dengan aman setelah selesai berbelanja.
+    ==================================================*/
     try {
         InventoryModule::saveInventory(player.name, inventory);
     } catch (const FileException& e) {
@@ -435,9 +466,10 @@ void Game::showShop() {
     }
 }
 
-// ============================================================
-// Material: Function, File Handling — Trading screen
-// ============================================================
+/*==================================================
+  MATERI: Function, File Handling
+  Menampilkan layar market trading dan membaca file CSV dompet pemain.
+==================================================*/
 void Game::showTrading() {
     system("cls");
 
@@ -456,7 +488,10 @@ void Game::showTrading() {
         PlayerModule::initPlayer(player, name);
     }
 
-    // Material: File Handling — Load wallet from CSV
+    /*==================================================
+      MATERI: File Handling
+      Membaca data wallet trading dari file CSV dengan penanganan error.
+    ==================================================*/
     try {
         wallet = TradingModule::loadWallet(player.name);
     } catch (const std::exception& e) {
@@ -480,13 +515,17 @@ void Game::showTrading() {
     }
 }
 
-// ============================================================
-// Materi: Function, Exception Handling (Leaderboard screen)
-// ============================================================
+/*==================================================
+  MATERI: Function, Exception Handling
+  Menampilkan menu papan peringkat dengan penanganan error file.
+==================================================*/
 void Game::showLeaderboard() {
     system("cls");
 
-    // Materi: Exception Handling, loading leaderboard data safely
+    /*==================================================
+      MATERI: Exception Handling
+      Membaca data leaderboard dengan aman.
+    ==================================================*/
     try {
         ScoreManager::runLeaderboardMenu();
     } catch (const std::exception& e) {
@@ -498,9 +537,10 @@ void Game::showLeaderboard() {
     _getch();
 }
 
-// ============================================================
-// Material: Function, Exception Handling — Gacha screen
-// ============================================================
+/*==================================================
+  MATERI: Function, Exception Handling
+  Menampilkan menu gacha dan memuat inventory dengan aman.
+==================================================*/
 void Game::showGacha() {
     system("cls");
 
@@ -519,7 +559,10 @@ void Game::showGacha() {
         PlayerModule::initPlayer(player, name);
     }
 
-    // Material: Exception Handling — load inventory before gacha
+    /*==================================================
+      MATERI: Exception Handling
+      Memuat file inventory sebelum melakukan gacha.
+    ==================================================*/
     try {
         inventory = InventoryModule::loadInventory(player.name);
     } catch (const FileException& e) {
@@ -539,9 +582,10 @@ void Game::showGacha() {
     }
 }
 
-// ============================================================
-// Material: Function — Main real-time game loop
-// ============================================================
+/*==================================================
+  MATERI: Function
+  Loop game utama yang berjalan real-time terus menerus.
+==================================================*/
 void Game::startGame() {
     isRunning = true;
     isPaused = false;
@@ -555,7 +599,10 @@ void Game::startGame() {
     // Clear screen once before starting
     system("cls");
 
-    // Material: Game Loop Pattern
+    /*==================================================
+      MATERI: Game Loop Pattern
+      Pola iterasi terus menerus selama game sedang berjalan.
+    ==================================================*/
     while (isRunning) {
         if (!isPaused) {
             // Update EMP Timer
@@ -583,11 +630,15 @@ void Game::startGame() {
     showGameOver();
 }
 
-// ============================================================
-// Material: Function — Handle real-time keyboard input using conio.h
-// ============================================================
+/*==================================================
+  MATERI: Function
+  Memproses input keyboard secara real-time.
+==================================================*/
 void Game::handleInput() {
-    // Material: conio.h — _kbhit() and _getch() for real-time input
+    /*==================================================
+      MATERI: Keyboard Input
+      Menggunakan library conio.h untuk membaca tombol tanpa menekan enter.
+    ==================================================*/
     if (_kbhit()) {
         char key = _getch();
 
@@ -650,16 +701,18 @@ void Game::handleInput() {
     }
 }
 
-// ============================================================
-// Material: STL Vector & Iterator — Update all bullets
-// ============================================================
+/*==================================================
+  MATERI: STL Vector & Iterator
+  Memperbarui posisi seluruh peluru yang aktif dalam vector.
+==================================================*/
 void Game::updateBullets() {
     BulletModule::updateBullets(bullets);
 }
 
-// ============================================================
-// Material: STL List & Iterator — Update all enemies
-// ============================================================
+/*==================================================
+  MATERI: STL List & Iterator
+  Memperbarui pergerakan semua musuh yang berada dalam list.
+==================================================*/
 void Game::updateEnemies() {
     // Only move enemies every N frames (slower movement during EMP)
     int enemySpeed = (player.loadout.empTimer > 0) ? 9 : GameConfig::ENEMY_MOVE_INTERVAL;
@@ -668,21 +721,26 @@ void Game::updateEnemies() {
     }
 }
 
-// ============================================================
-// Material: Function — Spawn enemies periodically
-// ============================================================
+/*==================================================
+  MATERI: Function
+  Memunculkan musuh secara periodik berdasarkan frame counter.
+==================================================*/
 void Game::spawnEnemy() {
     if (frameCounter % GameConfig::ENEMY_SPAWN_INTERVAL == 0) {
         EnemyModule::spawnEnemy(enemies);
     }
 }
 
-// ============================================================
-// Material: STL Vector & List, Iterator — Check collisions
-// ============================================================
+/*==================================================
+  MATERI: STL Vector & List, Iterator
+  Mengecek tabrakan antara peluru, musuh, dan pemain.
+==================================================*/
 void Game::checkCollisions() {
-    // --- Bullet vs Enemy collision ---
-    // Material: Iterator — nested iteration with safe erasure
+    // Cek tabrakan peluru dengan musuh
+    /*==================================================
+      MATERI: Iterator
+      Iterasi bersarang dengan penghapusan elemen secara aman (safe erasure).
+    ==================================================*/
     for (auto bulletIt = bullets.begin(); bulletIt != bullets.end(); ) {
         bool bulletHit = false;
 
@@ -696,9 +754,12 @@ void Game::checkCollisions() {
                 bulletIt->active = false;
                 enemyIt->active = false;
 
-                // Material: Default Argument — reward functions
-                PlayerModule::addScore(player);  // uses default +10
-                PlayerModule::addCoin(player);    // uses default +5
+                /*==================================================
+                  MATERI: Default Argument
+                  Memanggil fungsi reward dengan parameter default.
+                ==================================================*/
+                PlayerModule::addScore(player);
+                PlayerModule::addCoin(player);
                 player.destroyedEnemy++;
 
                 enemyIt = enemies.erase(enemyIt);
@@ -723,7 +784,10 @@ void Game::checkCollisions() {
             enemyIt->position.y == player.position.y) {
 
             enemyIt->active = false;
-            // Material: Default Argument — takeDamage with default 1
+            /*==================================================
+              MATERI: Default Argument
+              Mengurangi nyawa pemain dengan nilai damage default.
+            ==================================================*/
             PlayerModule::takeDamage(player);
 
             enemyIt = enemies.erase(enemyIt);
@@ -748,9 +812,10 @@ void Game::checkCollisions() {
     }
 }
 
-// ============================================================
-// Material: Function — Render the game arena to terminal
-// ============================================================
+/*==================================================
+  MATERI: Function
+  Melakukan proses render dan menggambar arena game ke layar.
+==================================================*/
 void Game::render() {
     // Move cursor to top-left instead of clearing (reduces flicker)
     GameUtils::clearScreen();
@@ -789,8 +854,11 @@ void Game::render() {
                 cell = GameConfig::PLAYER_SYMBOL;
             }
 
-            // Check if any bullet is at this position
-            // Material: STL Vector iteration
+            // Cek apakah ada peluru di posisi ini
+            /*==================================================
+              MATERI: STL Vector
+              Melakukan iterasi untuk memeriksa posisi peluru.
+            ==================================================*/
             if (cell == GameConfig::EMPTY_SYMBOL) {
                 for (const auto& b : bullets) {
                     if (b.active && b.position.x == x && b.position.y == y) {
@@ -800,8 +868,11 @@ void Game::render() {
                 }
             }
 
-            // Check if any enemy is at this position
-            // Material: STL List iteration
+            // Cek apakah ada musuh di posisi ini
+            /*==================================================
+              MATERI: STL List
+              Melakukan iterasi untuk memeriksa posisi musuh.
+            ==================================================*/
             if (cell == GameConfig::EMPTY_SYMBOL) {
                 for (const auto& e : enemies) {
                     if (e.active && e.position.x == x && e.position.y == y) {
@@ -826,9 +897,10 @@ void Game::render() {
     std::cout << "  [A/D] Move  [W/Space] Shoot  [E] EMP  [P] Pause  [Q] Quit\n";
 }
 
-// ============================================================
-// Material: Function — Game over screen
-// ============================================================
+/*==================================================
+  MATERI: Function
+  Menampilkan layar Game Over dan menyimpan skor akhir.
+==================================================*/
 void Game::showGameOver() {
     system("cls");
     int totalWidth = GameConfig::ARENA_WIDTH + 2;

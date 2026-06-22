@@ -2,27 +2,33 @@
 #include "gamedata.h"
 #include "gameconfig.h"
 
-// Material: Function declarations for Player module
+/*==================================================
+  MODUL PLAYER
+==================================================*/
 namespace PlayerModule {
 
-    // Initialize player with name and default values
-    // Material: Struct & Reference
+    // Menginisialisasi pemain dengan nama dan nilai default.
+    /*==================================================
+      MATERI: STRUCT & REFERENCE
+    ==================================================*/
     void initPlayer(Player& player, const std::string& name);
 
-    // Move player left (decrease x)
+    // Menggerakkan pemain ke kiri (mengurangi nilai x).
     void moveLeft(Player& player);
 
-    // Move player right (increase x)
+    // Menggerakkan pemain ke kanan (menambah nilai x).
     void moveRight(Player& player);
 
-    // Material: Default Argument
+    /*==================================================
+      MATERI: DEFAULT ARGUMENT
+    ==================================================*/
     void addScore(Player& player, int points = GameConfig::SCORE_PER_ENEMY);
     void addCoin(Player& player, int coins = GameConfig::COIN_PER_ENEMY);
 
-    // Reduce health
+    // Mengurangi health pemain.
     void takeDamage(Player& player, int damage = 1);
 
-    // Check if player is alive
+    // Memeriksa apakah pemain masih hidup.
     bool isAlive(const Player& player);
 
 } // namespace PlayerModule

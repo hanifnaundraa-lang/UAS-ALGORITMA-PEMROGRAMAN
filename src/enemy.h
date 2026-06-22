@@ -3,14 +3,18 @@
 #include "gameconfig.h"
 #include <list>
 
-// Material: STL List, Function declarations
+/*==================================================
+  MODUL ENEMY
+==================================================*/
 namespace EnemyModule {
 
-    // Spawn a new enemy at random x position at the top
+    // Memunculkan musuh baru pada posisi x acak di bagian atas arena.
     void spawnEnemy(std::list<Enemy>& enemies);
 
-    // Update all enemies (move downward), remove inactive ones
-    // Material: Iterator
+    // Memperbarui posisi semua musuh (bergerak ke bawah), dan menghapus musuh yang tidak aktif.
+    /*==================================================
+      MATERI: ITERATOR
+    ==================================================*/
     void updateEnemies(std::list<Enemy>& enemies);
 
 } // namespace EnemyModule

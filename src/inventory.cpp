@@ -8,14 +8,18 @@
 #include <iomanip>
 #include <conio.h>
 
-// Materi: Function, STL Vector, Iterator, File Handling, Exception Handling, Lambda, Find, Count, Sort
+/*==================================================
+  MATERI: FUNCTION, STL VECTOR, ITERATOR, FILE HANDLING, EXCEPTION HANDLING, LAMBDA, FIND, COUNT, SORT
+==================================================*/
 namespace InventoryModule {
 
     // ============================================================
-    // Add item, menggabungkan jumlah if the item (by id) already exists
+    // Menambahkan item ke inventory. Jika item sudah ada, jumlahnya ditambahkan.
     // ============================================================
     void addItem(std::vector<Item>& inventory, const Item& item) {
-        // Materi: Lambda Expression, Find
+        /*==================================================
+          MATERI: LAMBDA EXPRESSION, FIND
+        ==================================================*/
         auto it = std::find_if(inventory.begin(), inventory.end(),
             [&](const Item& existing) { return existing.id == item.id; });
 
@@ -27,10 +31,12 @@ namespace InventoryModule {
     }
 
     // ============================================================
-    // Menghapus satu unit dari itemId. hapus row if quantity hits 0.
+    // Mengurangi satu item berdasarkan ID. Jika jumlah habis, item dihapus dari inventory.
     // ============================================================
     bool removeItem(std::vector<Item>& inventory, int itemId) {
-        // Materi: Lambda Expression, Find
+        /*==================================================
+          MATERI: LAMBDA EXPRESSION, FIND
+        ==================================================*/
         auto it = std::find_if(inventory.begin(), inventory.end(),
             [&](const Item& existing) { return existing.id == itemId; });
 
@@ -46,43 +52,54 @@ namespace InventoryModule {
     }
 
     // ============================================================
-    // Cari item berdasarkan id (mutable pointer, nullptr if not found)
+    // Mencari item berdasarkan ID dan mengembalikan pointer mutable (nullptr jika tidak ada).
     // ============================================================
     Item* findItem(std::vector<Item>& inventory, int itemId) {
-        // Material: Lambda Expression, Find
+        /*==================================================
+          MATERI: LAMBDA EXPRESSION, FIND
+        ==================================================*/
         auto it = std::find_if(inventory.begin(), inventory.end(),
             [&](const Item& existing) { return existing.id == itemId; });
         return (it != inventory.end()) ? &(*it) : nullptr;
     }
 
     // ============================================================
-    // Hitung total jumlah yang dimiliki untuk itemId tertentu
+    // Menghitung total jumlah dari suatu item di dalam inventory.
     // ============================================================
     int countItem(const std::vector<Item>& inventory, int itemId) {
-        // Material: Lambda Expression, Find
+        /*==================================================
+          MATERI: LAMBDA EXPRESSION, FIND
+        ==================================================*/
         auto it = std::find_if(inventory.begin(), inventory.end(),
             [&](const Item& existing) { return existing.id == itemId; });
         return (it != inventory.end()) ? it->quantity : 0;
     }
 
     // ============================================================
-    // Feature 6: Search item berdasarkan nama (keyword)
-    // Material: Find, Lambda, Iterator
+    /*==================================================
+      MATERI: FIND, LAMBDA, ITERATOR - PENCARIAN ITEM BERDASARKAN KATA KUNCI NAMA.
+    ==================================================*/
     // ============================================================
     std::vector<Item> searchByName(const std::vector<Item>& inventory, const std::string& keyword) {
         std::vector<Item> results;
         std::string lowerKeyword = keyword;
-        // Material: Lambda — transform to lowercase for case-insensitive search
+        /*==================================================
+          MATERI: LAMBDA - MENGUBAH TEKS MENJADI HURUF KECIL UNTUK PENCARIAN YANG TIDAK SENSITIF KAPITAL.
+        ==================================================*/
         std::transform(lowerKeyword.begin(), lowerKeyword.end(), lowerKeyword.begin(),
             [](unsigned char c) { return std::tolower(c); });
 
-        // Material: Iterator — iterate and filter matching items
+        /*==================================================
+          MATERI: ITERATOR - MELAKUKAN ITERASI DAN MEMFILTER ITEM YANG COCOK.
+        ==================================================*/
         for (auto it = inventory.begin(); it != inventory.end(); ++it) {
             std::string lowerName = it->name;
             std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(),
                 [](unsigned char c) { return std::tolower(c); });
 
-            // Material: Find — check if keyword appears in name
+            /*==================================================
+              MATERI: FIND - MEMERIKSA APAKAH KATA KUNCI TERDAPAT DI DALAM NAMA ITEM.
+            ==================================================*/
             if (lowerName.find(lowerKeyword) != std::string::npos) {
                 results.push_back(*it);
             }
@@ -91,8 +108,9 @@ namespace InventoryModule {
     }
 
     // ============================================================
-    // Feature 7: Filter item berdasarkan type
-    // Material: Iterator, Lambda
+    /*==================================================
+      MATERI: ITERATOR, LAMBDA - MEMFILTER ITEM BERDASARKAN TIPENYA.
+    ==================================================*/
     // ============================================================
     std::vector<Item> filterByType(const std::vector<Item>& inventory, const std::string& type) {
         std::vector<Item> results;
@@ -100,7 +118,9 @@ namespace InventoryModule {
         std::transform(lowerType.begin(), lowerType.end(), lowerType.begin(),
             [](unsigned char c) { return std::tolower(c); });
 
-        // Material: Iterator, Lambda — filter by type
+        /*==================================================
+          MATERI: ITERATOR, LAMBDA - MELAKUKAN FILTER BERDASARKAN STRING TIPE.
+        ==================================================*/
         for (auto it = inventory.begin(); it != inventory.end(); ++it) {
             std::string lowerItemType = it->type;
             std::transform(lowerItemType.begin(), lowerItemType.end(), lowerItemType.begin(),
@@ -114,7 +134,7 @@ namespace InventoryModule {
     }
 
     // ============================================================
-    // Tampilkan inventory sebagai tabel yang diformat
+    // Menampilkan data inventory dalam bentuk tabel ke console.
     // ============================================================
     void displayInventory(const std::vector<Item>& inventory) {
         std::cout << "\n  ========================================\n";
@@ -144,7 +164,7 @@ namespace InventoryModule {
     }
 
     // ============================================================
-    // Feature 6 & 7: Interactive Inventory Menu
+    // Menu interaktif untuk melihat dan mengelola inventory pemain.
     // ============================================================
     void runInventory(std::vector<Item>& inventory, const std::string& playerName) {
         char choice;
@@ -160,7 +180,7 @@ namespace InventoryModule {
             std::cout << choice << "\n\n";
 
             if (choice == '1') {
-                // Feature 6: Search
+                // Fitur pencarian.
                 std::cout << "    Enter search keyword: ";
                 std::string keyword;
                 std::getline(std::cin, keyword);
@@ -179,7 +199,7 @@ namespace InventoryModule {
                 std::cout << "    Press any key to continue...";
                 _getch();
             } else if (choice == '2') {
-                // Feature 7: Filter
+                // Fitur filter.
                 std::cout << "    Available types: Consumable, Currency, Buff, Weapon\n";
                 std::cout << "    Enter type to filter: ";
                 std::string type;
@@ -203,12 +223,12 @@ namespace InventoryModule {
     }
 
     // ============================================================
-    // Feature 2: Save inventory ke data/inventory.csv
-    // Format: playerName,itemId,itemName,type,price,effect,quantity
-    // Mengganti semua baris milik playerName, mempertahankan baris pemain lain.
+    // Menyimpan data inventory pemain ke file CSV. Baris milik pemain lain dipertahankan.
     // ============================================================
     void saveInventory(const std::string& playerName, const std::vector<Item>& inventory) {
-        // Materi: File Handling, baca baris yang ada dari pemain lain terlebih dahulu
+        /*==================================================
+          MATERI: FILE HANDLING - MEMBACA DATA INVENTORY DARI PEMAIN LAIN AGAR TIDAK TERTIMPA.
+        ==================================================*/
         std::vector<std::string> otherPlayerLines;
         std::ifstream inFile(FileConfig::INVENTORY_FILE);
 
@@ -216,7 +236,7 @@ namespace InventoryModule {
             std::string line;
             bool isHeader = true;
             while (std::getline(inFile, line)) {
-                if (isHeader) { isHeader = false; continue; } // skip header
+                if (isHeader) { isHeader = false; continue; } // LEVEL 3: Mengabaikan baris header.
                 if (line.empty()) continue;
 
                 std::stringstream ss(line);
@@ -230,13 +250,15 @@ namespace InventoryModule {
             inFile.close();
         }
 
-        // Materi: Exception Handling (gagal if file tidak dapat ditulis)
+        /*==================================================
+          MATERI: EXCEPTION HANDLING - MELEMPAR EXCEPTION JIKA FILE TIDAK DAPAT DIBUKA UNTUK DITULIS.
+        ==================================================*/
         std::ofstream outFile(FileConfig::INVENTORY_FILE);
         if (!outFile.is_open()) {
             throw FileException("Unable to open " + FileConfig::INVENTORY_FILE + " for writing.");
         }
 
-        // Feature 2: Updated header with price and effect columns
+        // Menulis baris header dengan penambahan kolom price dan effect.
         outFile << "playerName,itemId,itemName,type,price,effect,quantity\n";
 
         for (const auto& line : otherPlayerLines) {
@@ -257,14 +279,15 @@ namespace InventoryModule {
     }
 
     // ============================================================
-    // Feature 2 & 3: Load inventory with price/effect and CSV validation
-    // Backward compatible: handles both old (5-column) and new (7-column) formats
+    // Membaca file inventory dari CSV. Mendukung format lama (5 kolom) dan baru (7 kolom).
     // ============================================================
     std::vector<Item> loadInventory(const std::string& playerName) {
         std::vector<Item> result;
         std::ifstream inFile(FileConfig::INVENTORY_FILE);
 
-        // Materi: Exception Handling, file hilang tidak fatal
+        /*==================================================
+          MATERI: EXCEPTION HANDLING - MENGEMBALIKAN LIST KOSONG ALIH-ALIH CRASH JIKA FILE TIDAK ADA.
+        ==================================================*/
         if (!inFile.is_open()) {
             return result;
         }
@@ -272,10 +295,10 @@ namespace InventoryModule {
         std::string line;
         bool isHeader = true;
         while (std::getline(inFile, line)) {
-            if (isHeader) { isHeader = false; continue; } // skip header
+            if (isHeader) { isHeader = false; continue; } // LEVEL 3: Mengabaikan baris header.
             if (line.empty()) continue;
 
-            // Feature 3: CSV Validation — wrap each row in try/catch
+            // Validasi CSV dengan menempatkan pembacaan tiap baris di dalam blok try-catch.
             try {
                 std::stringstream ss(line);
                 std::string ownerName, idStr, name, type;
@@ -286,8 +309,7 @@ namespace InventoryModule {
 
                 if (ownerName != playerName) continue;
 
-                // Feature 2 & 3: Try reading new format (7 columns)
-                // Backward compatible with old format (5 columns)
+                // Membaca data dengan kompatibilitas terhadap format tabel lama dan baru.
                 std::string field5, field6, field7;
                 std::getline(ss, field5, ',');
                 std::getline(ss, field6, ',');
@@ -300,24 +322,24 @@ namespace InventoryModule {
                 item.stock = -1;
 
                 if (!field7.empty()) {
-                    // New format: price,effect,quantity
+                    // Format baru (termasuk kolom price, effect, quantity).
                     item.price = std::stoi(field5);
                     item.effect = field6;
                     item.quantity = std::stoi(field7);
                 } else if (!field6.empty()) {
-                    // Could be either format — try as new format first
+                    // Format ambigu, dicoba sebagai format baru terlebih dahulu.
                     try {
                         item.price = std::stoi(field5);
                         item.effect = field6;
                         item.quantity = 1; // default
                     } catch (...) {
-                        // Old format: quantity was in field5
+                        // Jika gagal, diasumsikan format lama di mana jumlah (quantity) berada di kolom kelima.
                         item.price = 0;
                         item.effect = "";
                         item.quantity = std::stoi(field5);
                     }
                 } else {
-                    // Old format: playerName,itemId,itemName,type,quantity
+                    // Format lama (playerName, itemId, itemName, type, quantity).
                     item.price = 0;
                     item.effect = "";
                     item.quantity = std::stoi(field5);
@@ -325,7 +347,7 @@ namespace InventoryModule {
 
                 result.push_back(item);
             } catch (const std::exception&) {
-                // Feature 3: Skip corrupted rows, continue loading
+                // Mengabaikan baris yang korup dan melanjutkan pemuatan data.
                 continue;
             }
         }

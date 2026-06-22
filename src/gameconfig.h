@@ -1,27 +1,39 @@
 #pragma once
 #include <string>
 
-// Material: Namespace
+/*==================================================
+  MATERI: NAMESPACE
+==================================================*/
 namespace GameConfig {
-    // Arena dimensions (inner playable area, excluding borders)
+    /*==================================================
+      FUNGSI: Dimensi arena (area yang dapat dimainkan, tidak termasuk batas)
+    ==================================================*/
     constexpr int ARENA_WIDTH = 40;
     constexpr int ARENA_HEIGHT = 20;
 
-    // Player settings
+    /*==================================================
+      FUNGSI: Pengaturan pemain
+    ==================================================*/
     constexpr int PLAYER_START_HEALTH = 3;
     constexpr int PLAYER_START_X = ARENA_WIDTH / 2;
     constexpr int PLAYER_START_Y = ARENA_HEIGHT - 1;
 
-    // Game timing
+    /*==================================================
+      FUNGSI: Pengaturan waktu permainan
+    ==================================================*/
     constexpr int GAME_LOOP_DELAY_MS = 80;
-    constexpr int ENEMY_SPAWN_INTERVAL = 15; // frames between spawns
-    constexpr int ENEMY_MOVE_INTERVAL = 3;    // enemies move every N frames (higher = slower)
+    constexpr int ENEMY_SPAWN_INTERVAL = 15; // [LEVEL 3] Jeda frame antar spawn
+    constexpr int ENEMY_MOVE_INTERVAL = 3;    // [LEVEL 3] Musuh bergerak setiap N frame (lebih tinggi = lebih lambat)
 
-    // Scoring
+    /*==================================================
+      FUNGSI: Pengaturan skor
+    ==================================================*/
     constexpr int SCORE_PER_ENEMY = 10;
     constexpr int COIN_PER_ENEMY = 15;
 
-    // Symbols
+    /*==================================================
+      FUNGSI: Simbol karakter
+    ==================================================*/
     constexpr char PLAYER_SYMBOL = 'A';
     constexpr char BULLET_SYMBOL = '|';
     constexpr char ENEMY_SYMBOL = 'V';
@@ -29,7 +41,12 @@ namespace GameConfig {
     constexpr char BORDER_SYMBOL = '#';
 }
 
-// Material: Namespace — File paths
+/*==================================================
+  MATERI: NAMESPACE
+==================================================*/
+/*==================================================
+  FUNGSI: Jalur file data
+==================================================*/
 namespace FileConfig {
     const std::string DATA_DIR = "data/";
     const std::string LEADERBOARD_FILE = DATA_DIR + "leaderboard.csv";
