@@ -53,6 +53,7 @@ private:
     void updateBullets();
     void updateEnemies();
     void spawnEnemy();
+    void spawnArmored();
     void checkCollisions();
     void render();
 

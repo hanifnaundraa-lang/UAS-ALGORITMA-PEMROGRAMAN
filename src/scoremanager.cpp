@@ -126,26 +126,28 @@ namespace ScoreManager {
 
         if (it != scores.end()) {
             int rank = distance(scores.begin(), it) + 1;
-            cout << "\n  Player Found\n\n";
+            cout << "\n  " << GameColor::TXT_SUCCESS << "Player Found" << GameColor::RESET << "\n\n";
             cout << "  Name  : " << it->name << "\n";
             cout << "  Rank  : " << rank << "\n";
             cout << "  Score : " << it->score << "\n";
         } else {
-            cout << "\n  Player not found.\n";
+            cout << "\n  " << GameColor::TXT_WARNING << "Player not found." << GameColor::RESET << "\n";
         }
     }
 
     // Menampilkan statistik leaderboard (total pemain, skor tertinggi, terendah, rata-rata).
     void showStatistics(const vector<PlayerScore>& scores) {
-        cout << "\n  ===== LEADERBOARD STATS =====\n\n";
+        cout << "\n  " << GameColor::MENU_TITLE << "===== LEADERBOARD STATS =====" << GameColor::RESET << "\n\n";
         if (scores.empty()) {
             cout << "  No data available.\n";
             return;
         }
 
         vector<string> uniquePlayers;
-        int maxScore = 0;
+        int maxScore = scores[0].score;
         int minScore = scores[0].score;
+        string namaMax = scores[0].name;
+        string namaMin = scores[0].name;
         long long sumScore = 0;
 
         /*==================================================
@@ -159,16 +161,22 @@ namespace ScoreManager {
                 uniquePlayers.push_back(lowerName);
             }
 
-            if (it->score > maxScore) maxScore = it->score;
-            if (it->score < minScore) minScore = it->score;
+            if (it->score > maxScore) {
+                maxScore = it->score;
+                namaMax = it->name;
+            }
+            if (it->score < minScore) {
+                minScore = it->score;
+                namaMin = it->name;
+            }
             sumScore += it->score;
         }
 
         int avgScore = (scores.size() > 0) ? (sumScore / scores.size()) : 0;
 
         cout << "  Total Players : " << uniquePlayers.size() << "\n";
-        cout << "  Highest Score : " << maxScore << "\n";
-        cout << "  Lowest Score  : " << minScore << "\n";
+        cout << "  Highest Score : " << maxScore << " - [" << namaMax << "]" << "\n";
+        cout << "  Lowest Score  : " << minScore << " - [" << namaMin << "]" << "\n";
         cout << "  Average Score : " << avgScore << "\n";
     }
 
@@ -200,18 +208,18 @@ namespace ScoreManager {
         });
 
         if (gamesPlayed > 0) {
-            cout << "\n  ===== PERSONAL BEST =====\n\n";
+            cout << "\n  " << GameColor::MENU_TITLE << "===== PERSONAL BEST =====" << GameColor::RESET << "\n\n";
             cout << "  Player       : " << actualName << "\n";
             cout << "  Best Score   : " << bestScore << "\n";
             cout << "  Games Played : " << gamesPlayed << "\n";
         } else {
-            cout << "\n  Player not found.\n";
+            cout << "\n  " << GameColor::TXT_WARNING << "Player not found." << GameColor::RESET << "\n";
         }
     }
 
     // Menampilkan pemain dengan skor tertinggi secara keseluruhan.
     void showHallOfFame(const vector<PlayerScore>& scores) {
-        cout << "\n  ===== HALL OF FAME =====\n\n";
+        cout << "\n  " << GameColor::MENU_TITLE << "===== HALL OF FAME =====" << GameColor::RESET << "\n\n";
         if (scores.empty()) {
             cout << "  No records available.\n";
             return;
@@ -219,7 +227,7 @@ namespace ScoreManager {
 
         auto best = scores.begin(); // Sudah diurutkan secara menurun.
 
-        cout << "  ***  The Greatest Player of All Time  ***\n\n";
+        cout << "  " << GameColor::TXT_SUCCESS << "***  The Greatest Player of All Time  ***" << GameColor::RESET << "\n\n";
         cout << "  Player : " << best->name << "\n";
         cout << "  Score  : " << best->score << "\n";
         cout << "  Date   : " << best->dateTime << "\n";
@@ -241,14 +249,14 @@ namespace ScoreManager {
         while (inMenu) {
             system("cls");
             cout << "\n  ======================================================\n";
-            cout << "                       LEADERBOARD                      \n";
+            cout << GameColor::MENU_TITLE << "                       LEADERBOARD                      \n" << GameColor::RESET;
             cout << "  ======================================================\n\n";
-            cout << "    1. View Leaderboard\n";
-            cout << "    2. Search Player\n";
-            cout << "    3. Statistics\n";
-            cout << "    4. Personal Best\n";
-            cout << "    5. Hall Of Fame\n";
-            cout << "    6. Back\n\n";
+            cout << "    [1] View Leaderboard\n";
+            cout << "    [2] Search Player\n";
+            cout << "    [3] Statistics\n";
+            cout << "    [4] Personal Best\n";
+            cout << "    [5] Hall Of Fame\n";
+            cout << "    [0] Back\n\n";
             cout << "    Enter your choice: ";
             
             char choice = _getch();
@@ -258,7 +266,7 @@ namespace ScoreManager {
             
             if (choice == '1') {
                 cout << "\n  ======================================================\n";
-                cout << "                       LEADERBOARD                      \n";
+                cout << GameColor::MENU_TITLE << "                       LEADERBOARD                      \n" << GameColor::RESET;
                 cout << "  ======================================================\n\n";
                 displayLeaderboardView(scores);
             } else if (choice == '2') {
@@ -269,11 +277,11 @@ namespace ScoreManager {
                 showPersonalBest(scores);
             } else if (choice == '5') {
                 showHallOfFame(scores);
-            } else if (choice == '6') {
+            } else if (choice == '0') {
                 inMenu = false;
-                continue;
+                break;
             } else {
-                cout << "\n  Invalid choice.\n";
+                cout << "\n  " << GameColor::TXT_WARNING << "Invalid choice." << GameColor::RESET << "\n";
             }
             
             if (inMenu) {

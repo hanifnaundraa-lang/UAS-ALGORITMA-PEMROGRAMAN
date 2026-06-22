@@ -217,7 +217,7 @@ namespace GachaModule {
         int ticketCount = InventoryModule::countItem(inventory, 5); // ID 5 = Gacha Ticket
 
         if (ticketCount < 1) {
-            std::cout << "\n  Not enough tickets. You need 1 Gacha Ticket.\n";
+            std::cout << "\n  " << GameColor::TXT_WARNING << "Not enough tickets. You need 1 Gacha Ticket." << GameColor::RESET << "\n";
             return;
         }
 
@@ -241,7 +241,7 @@ namespace GachaModule {
                 w.btc += btcDrop;
                 TradingModule::saveWallet(w);
             } catch (const std::exception& e) {
-                std::cout << "\n  [Wallet Error] " << e.what() << "\n";
+                std::cout << "\n  " << GameColor::TXT_ERROR << "[Wallet Error] " << e.what() << GameColor::RESET << "\n";
             }
         } else {
             /*==================================================
@@ -253,9 +253,9 @@ namespace GachaModule {
 
         // Menampilkan pengumuman keberhasilan mendapat item.
         std::cout << "\n  ======================================================\n";
-        std::cout << "                     GACHA RESULT                       \n";
+        std::cout << GameColor::MENU_TITLE << "                     GACHA RESULT                       \n" << GameColor::RESET;
         std::cout << "  ======================================================\n\n";
-        std::cout << "  Congratulations!\n\n";
+        std::cout << "  " << GameColor::TXT_SUCCESS << "Congratulations!" << GameColor::RESET << "\n\n";
         std::cout << "  Reward  : " << finalRewardName << "\n";
         std::cout << "  Rarity  : " << reward.rarity << "\n";
 
@@ -266,7 +266,7 @@ namespace GachaModule {
         try {
             saveHistory(playerName, historyReward);
         } catch (const std::exception& e) {
-            std::cout << "\n  Warning: " << e.what() << "\n";
+            std::cout << "\n  " << GameColor::TXT_WARNING << "Warning: " << e.what() << GameColor::RESET << "\n";
         }
 
         /*==================================================
@@ -275,7 +275,7 @@ namespace GachaModule {
         try {
             InventoryModule::saveInventory(playerName, inventory);
         } catch (const std::exception& e) {
-            std::cout << "\n  Warning: " << e.what() << "\n";
+            std::cout << "\n  " << GameColor::TXT_WARNING << "Warning: " << e.what() << GameColor::RESET << "\n";
         }
     }
 
@@ -287,7 +287,7 @@ namespace GachaModule {
         int ticketCount = InventoryModule::countItem(inventory, 5);
 
         if (ticketCount < 5) {
-            std::cout << "\n  Not enough tickets. You need 5 Gacha Tickets.\n";
+            std::cout << "\n  " << GameColor::TXT_WARNING << "Not enough tickets. You need 5 Gacha Tickets." << GameColor::RESET << "\n";
             std::cout << "  Current tickets: " << ticketCount << "\n";
             return;
         }
@@ -298,7 +298,7 @@ namespace GachaModule {
         }
 
         std::cout << "\n  ======================================================\n";
-        std::cout << "                  MULTI PULL RESULT (x5)                \n";
+        std::cout << GameColor::MENU_TITLE << "                  MULTI PULL RESULT (x5)                \n" << GameColor::RESET;
         std::cout << "  ======================================================\n\n";
 
         // Iterasi mendapatkan sebanyak lima buah peluang secara acak.
@@ -338,7 +338,7 @@ namespace GachaModule {
         try {
             InventoryModule::saveInventory(playerName, inventory);
         } catch (const std::exception& e) {
-            std::cout << "\n  Warning: " << e.what() << "\n";
+            std::cout << "\n  " << GameColor::TXT_WARNING << "Warning: " << e.what() << GameColor::RESET << "\n";
         }
     }
 
@@ -351,7 +351,7 @@ namespace GachaModule {
         std::vector<GachaRecord> records = loadHistory(playerName);
 
         std::cout << "\n  ======================================================\n";
-        std::cout << "                    GACHA HISTORY                       \n";
+        std::cout << GameColor::MENU_TITLE << "                    GACHA HISTORY                       \n" << GameColor::RESET;
         std::cout << "  ======================================================\n\n";
 
         if (records.empty()) {
@@ -385,7 +385,7 @@ namespace GachaModule {
         std::vector<GachaRecord> records = loadHistory(playerName);
 
         std::cout << "\n  ======================================================\n";
-        std::cout << "                    GACHA STATS                         \n";
+        std::cout << GameColor::MENU_TITLE << "                    GACHA STATS                         \n" << GameColor::RESET;
         std::cout << "  ======================================================\n\n";
 
         if (records.empty()) {
@@ -424,7 +424,7 @@ namespace GachaModule {
     // ============================================================
     void viewRewardPool(const std::vector<GachaReward>& pool) {
         std::cout << "\n  ======================================================\n";
-        std::cout << "                    REWARD POOL                         \n";
+        std::cout << GameColor::MENU_TITLE << "                    REWARD POOL                         \n" << GameColor::RESET;
         std::cout << "  ======================================================\n\n";
 
         if (pool.empty()) {
@@ -466,14 +466,14 @@ namespace GachaModule {
         try {
             pool = loadPool();
         } catch (const std::exception& e) {
-            std::cout << "\n  Error loading gacha pool: " << e.what() << "\n";
+            std::cout << "\n  " << GameColor::TXT_ERROR << "Error loading gacha pool: " << e.what() << GameColor::RESET << "\n";
             std::cout << "  Press any key to return...";
             _getch();
             return;
         }
 
         if (pool.empty()) {
-            std::cout << "\n  Gacha pool is empty. No rewards available.\n";
+            std::cout << "\n  " << GameColor::TXT_WARNING << "Gacha pool is empty. No rewards available." << GameColor::RESET << "\n";
             std::cout << "  Press any key to return...";
             _getch();
             return;
@@ -489,7 +489,7 @@ namespace GachaModule {
             int tickets = InventoryModule::countItem(inventory, 5);
 
             std::cout << "\n  ======================================================\n";
-            std::cout << "                        GACHA                           \n";
+            std::cout << GameColor::MENU_TITLE << "                        GACHA                           \n" << GameColor::RESET;
             std::cout << "  ======================================================\n\n";
             std::cout << "  Tickets Available: " << tickets << "\n\n";
             std::cout << "    [1] Single Pull (1 Ticket)\n";
@@ -525,7 +525,7 @@ namespace GachaModule {
                     inMenu = false;
                     continue;
                 default:
-                    std::cout << "\n  Invalid choice.\n";
+                    std::cout << "    " << GameColor::TXT_WARNING << "Invalid choice. Please try again." << GameColor::RESET << "\n";
                     break;
             }
 

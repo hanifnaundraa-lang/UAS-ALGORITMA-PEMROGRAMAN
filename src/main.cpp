@@ -4,6 +4,7 @@
   - Entry point aplikasi
 ==================================================*/
 #include "game.h"
+#include "gameutils.h"
 #include <iostream>
 
 /*==================================================
@@ -11,6 +12,9 @@
   Titik awal eksekusi program.
 ==================================================*/
 int main() {
+    // Mengaktifkan Pemrosesan Warna ANSI untuk Terminal Windows
+    GameUtils::initConsole();
+
     /*==================================================
       MATERI: Exception Handling
       Menangkap error fatal saat program berjalan.

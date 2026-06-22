@@ -11,6 +11,9 @@ namespace EnemyModule {
     // Memunculkan musuh baru pada posisi x acak di bagian atas arena.
     void spawnEnemy(std::list<Enemy>& enemies);
 
+    // Memunculkan Armored Enemy pada posisi acak di bagian atas arena.
+    void spawnArmored(std::list<Enemy>& enemies);
+
     // Memperbarui posisi semua musuh (bergerak ke bawah), dan menghapus musuh yang tidak aktif.
     /*==================================================
       MATERI: ITERATOR

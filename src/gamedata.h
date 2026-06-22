@@ -43,6 +43,7 @@ struct Enemy {
     Position position;
     int health;
     bool active;
+    bool isArmored;
 };
 
 /*==================================================

@@ -106,9 +106,9 @@ namespace ShopModule {
     // ============================================================
     void displayShop(const std::vector<Item>& catalog, int walletCoin) {
         std::cout << "\n  ========================================\n";
-        std::cout << "                   SHOP                   \n";
+        std::cout << GameColor::MENU_TITLE << "                   SHOP                   \n" << GameColor::RESET;
         std::cout << "  ========================================\n\n";
-        std::cout << "    Wallet Coin: " << walletCoin << "\n\n";
+        std::cout << "    Wallet Coin: " << GameColor::TXT_WARNING << walletCoin << GameColor::RESET << "\n\n";
 
         std::cout << "    " << std::left << std::setw(5)  << "ID"
                   << std::setw(16) << "Name"
@@ -294,7 +294,7 @@ namespace ShopModule {
         try {
             catalog = loadShopCatalog();
         } catch (const FileException& e) {
-            std::cout << "\n  " << e.what() << "\n";
+            std::cout << "\n  " << GameColor::TXT_ERROR << e.what() << GameColor::RESET << "\n";
             std::cout << "    Press any key to continue...";
             _getch();
             return;
@@ -305,7 +305,7 @@ namespace ShopModule {
             system("cls");
             displayShop(catalog, wallet.coin);
 
-            std::cout << "    [1-5] Enter item ID to buy\n";
+            std::cout << "    [1-7] Enter item ID to buy\n";
             std::cout << "    [S]   Sort Options\n";
             std::cout << "    [0]   Back to Main Menu\n";
             std::cout << "\n    Your choice: ";
@@ -317,7 +317,7 @@ namespace ShopModule {
                 try {
                     saveShopCatalog(catalog);
                 } catch (const FileException& e) {
-                    std::cout << "\n  " << e.what() << "\n";
+                    std::cout << "\n  " << GameColor::TXT_ERROR << e.what() << GameColor::RESET << "\n";
                 }
                 break;
             }
@@ -350,7 +350,7 @@ namespace ShopModule {
             // Alur pembelian barang.
             int itemId = choice - '0';
             if (itemId < 1 || itemId > 9) {
-                std::cout << "\n    Invalid choice. Press any key to continue...";
+                std::cout << "\n    " << GameColor::TXT_WARNING << "Invalid choice. Press any key to continue..." << GameColor::RESET;
                 _getch();
                 continue;
             }
@@ -361,7 +361,7 @@ namespace ShopModule {
             if (!(std::cin >> qty)) {
                 std::cin.clear();
                 std::cin.ignore(10000, '\n');
-                std::cout << "    Invalid input. Press any key to continue...";
+                std::cout << "    " << GameColor::TXT_WARNING << "Invalid input. Press any key to continue..." << GameColor::RESET;
                 _getch();
                 continue;
             }
@@ -369,12 +369,12 @@ namespace ShopModule {
 
             try {
                 buyItem(wallet, catalog, inventory, itemId, qty);
-                std::cout << "\n    Purchase successful! Bought " << qty << " item(s)."
+                std::cout << "\n    " << GameColor::TXT_SUCCESS << "Purchase successful! Bought " << qty << " item(s)." << GameColor::RESET
                           << " Remaining coin: " << wallet.coin << "\n";
             } catch (const InsufficientFundsException& e) {
-                std::cout << "\n  " << e.what() << "\n";
+                std::cout << "\n  " << GameColor::TXT_WARNING << e.what() << GameColor::RESET << "\n";
             } catch (const GameException& e) {
-                std::cout << "\n  " << e.what() << "\n";
+                std::cout << "\n  " << GameColor::TXT_ERROR << e.what() << GameColor::RESET << "\n";
             }
 
             std::cout << "\n    Press any key to continue...";
