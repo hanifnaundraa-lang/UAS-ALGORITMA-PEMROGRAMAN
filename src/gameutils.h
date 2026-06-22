@@ -6,6 +6,17 @@
 // Material: Namespace, Function, Default Argument & Inline Function, Function Template
 namespace GameUtils {
 
+    // Initialize console for ANSI color support
+    inline void initConsole() {
+        HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+        if (hOut == INVALID_HANDLE_VALUE) return;
+        DWORD dwMode = 0;
+        if (!GetConsoleMode(hOut, &dwMode)) return;
+        dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+        SetConsoleMode(hOut, dwMode);
+        SetConsoleOutputCP(CP_UTF8);
+    }
+
     // Material: Function Template
     template <typename T>
     T clampValue(T value, T minVal, T maxVal) {

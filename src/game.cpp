@@ -72,10 +72,10 @@ void Game::run() {
         std::cout << "\n  Thank you for playing Astro Strike!\n\n";
 
     } catch (const GameException& e) {
-        std::cerr << "\n  " << e.what() << std::endl;
+        std::cerr << "\n  " << GameColor::TXT_ERROR << e.what() << GameColor::RESET << std::endl;
         GameUtils::setCursorVisible(true);
     } catch (const std::exception& e) {
-        std::cerr << "\n  Unexpected error: " << e.what() << std::endl;
+        std::cerr << "\n  " << GameColor::TXT_ERROR << "Unexpected error: " << e.what() << GameColor::RESET << std::endl;
         GameUtils::setCursorVisible(true);
     }
 }
@@ -94,8 +94,10 @@ void Game::showMainMenu() {
     for (int i = 0; i < totalWidth; ++i) std::cout << "=";
     std::cout << "\n";
 
+    std::cout << GameColor::MENU_TITLE;
     GameUtils::printCentered("ASTRO STRIKE", totalWidth + 2, true);
     GameUtils::printCentered("Terminal Space Shooter", totalWidth + 2, true);
+    std::cout << GameColor::RESET;
 
     std::cout << "  ";
     for (int i = 0; i < totalWidth; ++i) std::cout << "=";
@@ -143,7 +145,7 @@ void Game::showLoadoutAndStart() {
     try {
         inventory = InventoryModule::loadInventory(player.name);
     } catch (const FileException& e) {
-        std::cout << "\n  " << e.what() << "\n";
+        std::cout << "\n  " << GameColor::TXT_ERROR << e.what() << GameColor::RESET << "\n";
     }
 
     std::vector<Item> originalInventory = inventory; // Keep backup for unequip feature
@@ -292,11 +294,11 @@ void Game::showControls() {
     std::cout << "    P                = Pause / Resume\n";
     std::cout << "    Q                = Quit Game\n\n";
     std::cout << "    Symbols:\n";
-    std::cout << "      " << GameConfig::PLAYER_SYMBOL << " = Your spaceship\n";
-    std::cout << "      " << GameConfig::BULLET_SYMBOL << " = Bullet\n";
-    std::cout << "      " << GameConfig::ENEMY_SYMBOL  << " = Enemy\n";
-    std::cout << "      " << GameConfig::ARMORED_SYMBOL  << " = Armored Enemy\n";
-    std::cout << "      " << GameConfig::BORDER_SYMBOL  << " = Border\n\n";
+    std::cout << "      " << GameColor::PLAYER << GameConfig::PLAYER_SYMBOL << GameColor::RESET << " = Your spaceship\n";
+    std::cout << "      " << GameColor::BULLET << GameConfig::BULLET_SYMBOL << GameColor::RESET << " = Bullet\n";
+    std::cout << "      " << GameColor::ENEMY << GameConfig::ENEMY_SYMBOL  << GameColor::RESET << " = Enemy\n";
+    std::cout << "      " << GameColor::ARMORED << GameConfig::ARMORED_SYMBOL  << GameColor::RESET << " = Armored Enemy\n";
+    std::cout << "      " << GameColor::WALL << GameConfig::BORDER_SYMBOL  << GameColor::RESET << " = Border\n\n";
 
     std::cout << "\n";
     std::cout << "  =============================================================\n";
@@ -780,10 +782,10 @@ void Game::render() {
     int arenaH = GameConfig::ARENA_HEIGHT;
 
     // --- HUD line ---
-    std::cout << "  Score: " << std::setw(5) << player.score
-              << " | HP: " << player.health
-              << " | Coin: " << std::setw(5) << player.coin
-              << " | Destroyed: " << player.destroyedEnemy
+    std::cout << "  Score: " << GameColor::HIGHLIGHT << std::setw(5) << player.score << GameColor::RESET
+              << " | HP: " << GameColor::TXT_SUCCESS << player.health << GameColor::RESET
+              << " | Coin: " << GameColor::TXT_WARNING << std::setw(5) << player.coin << GameColor::RESET
+              << " | Destroyed: " << GameColor::HIGHLIGHT << player.destroyedEnemy << GameColor::RESET
               << "        \n";
 
     if (player.loadout.empEquipped) {
@@ -794,13 +796,13 @@ void Game::render() {
     std::cout << "\n";
 
     // --- Top border ---
-    std::cout << "  ";
+    std::cout << "  " << GameColor::WALL;
     for (int i = 0; i < arenaW + 2; ++i) std::cout << GameConfig::BORDER_SYMBOL;
-    std::cout << "\n";
+    std::cout << GameColor::RESET << "\n";
 
     // --- Arena rows ---
     for (int y = 0; y < arenaH; ++y) {
-        std::cout << "  " << GameConfig::BORDER_SYMBOL;
+        std::cout << "  " << GameColor::WALL << GameConfig::BORDER_SYMBOL << GameColor::RESET;
 
         for (int x = 0; x < arenaW; ++x) {
             char cell = GameConfig::EMPTY_SYMBOL;
@@ -836,16 +838,26 @@ void Game::render() {
                 }
             }
 
-            std::cout << cell;
+            if (cell == GameConfig::PLAYER_SYMBOL) {
+                std::cout << GameColor::PLAYER << cell << GameColor::RESET;
+            } else if (cell == GameConfig::BULLET_SYMBOL) {
+                std::cout << GameColor::BULLET << cell << GameColor::RESET;
+            } else if (cell == GameConfig::ENEMY_SYMBOL) {
+                std::cout << GameColor::ENEMY << cell << GameColor::RESET;
+            } else if (cell == GameConfig::ARMORED_SYMBOL) {
+                std::cout << GameColor::ARMORED << cell << GameColor::RESET;
+            } else {
+                std::cout << cell;
+            }
         }
 
-        std::cout << GameConfig::BORDER_SYMBOL << "\n";
+        std::cout << GameColor::WALL << GameConfig::BORDER_SYMBOL << GameColor::RESET << "\n";
     }
 
     // --- Bottom border ---
-    std::cout << "  ";
+    std::cout << "  " << GameColor::WALL;
     for (int i = 0; i < arenaW + 2; ++i) std::cout << GameConfig::BORDER_SYMBOL;
-    std::cout << "\n";
+    std::cout << GameColor::RESET << "\n";
 
     // --- Controls hint ---
     std::cout << "  [A/D] Move  [W/Space] Shoot  [E] EMP  [P] Pause  [Q] Quit\n";
@@ -863,15 +875,17 @@ void Game::showGameOver() {
     for (int i = 0; i < totalWidth; ++i) std::cout << "=";
     std::cout << "\n";
 
+    std::cout << GameColor::TXT_ERROR;
     GameUtils::printCentered("GAME OVER", totalWidth + 2, true);
+    std::cout << GameColor::RESET;
 
     std::cout << "  ";
     for (int i = 0; i < totalWidth; ++i) std::cout << "=";
     std::cout << "\n\n";
 
     std::cout << "    Player            : " << player.name << "\n";
-    std::cout << "    Final Score       : " << player.score << "\n";
-    std::cout << "    Coin Earned       : " << player.coin << "\n";
+    std::cout << "    Final Score       : " << GameColor::HIGHLIGHT << player.score << GameColor::RESET << "\n";
+    std::cout << "    Coin Earned       : " << GameColor::TXT_WARNING << player.coin << GameColor::RESET << "\n";
     std::cout << "    Enemies Destroyed : " << player.destroyedEnemy << "\n\n";
 
     std::cout << "  ";
@@ -900,9 +914,9 @@ void Game::showGameOver() {
 
             ScoreManager::saveScore(currentRun);
         } catch (const std::exception& e) {
-            std::cerr << "Failed to save score: " << e.what() << std::endl;
+            std::cerr << GameColor::TXT_ERROR << "Failed to save score: " << e.what() << GameColor::RESET << std::endl;
         } catch (...) {
-            std::cerr << "An unknown error occurred while saving the score." << std::endl;
+            std::cerr << GameColor::TXT_ERROR << "An unknown error occurred while saving the score." << GameColor::RESET << std::endl;
         }
     }
 
