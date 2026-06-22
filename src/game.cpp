@@ -295,6 +295,7 @@ void Game::showControls() {
     std::cout << "      " << GameConfig::PLAYER_SYMBOL << " = Your spaceship\n";
     std::cout << "      " << GameConfig::BULLET_SYMBOL << " = Bullet\n";
     std::cout << "      " << GameConfig::ENEMY_SYMBOL  << " = Enemy\n";
+    std::cout << "      " << GameConfig::BOSS_SYMBOL  << " = Boss\n";
     std::cout << "      " << GameConfig::BORDER_SYMBOL  << " = Border\n\n";
 
     std::cout << "\n";
@@ -563,6 +564,7 @@ void Game::startGame() {
             updateBullets();
             updateEnemies();
             spawnEnemy();
+            spawnBoss();
             checkCollisions();
             render();
             frameCounter++;
@@ -674,6 +676,15 @@ void Game::spawnEnemy() {
 }
 
 // ============================================================
+// Material: Function — Spawn boss periodically
+// ============================================================
+void Game::spawnBoss() {
+    if (frameCounter % GameConfig::ENEMY_SPAWN_INTERVAL == 0) {
+        EnemyModule::spawnBoss(enemies);
+    }
+}
+
+// ============================================================
 // Material: STL Vector & List, Iterator — Check collisions
 // ============================================================
 void Game::checkCollisions() {
@@ -690,15 +701,22 @@ void Game::checkCollisions() {
 
                 // Bullet hits enemy
                 bulletIt->active = false;
-                enemyIt->active = false;
-
-                // Material: Default Argument — reward functions
-                PlayerModule::addScore(player);  // uses default +10
-                PlayerModule::addCoin(player);    // uses default +5
-                player.destroyedEnemy++;
-
-                enemyIt = enemies.erase(enemyIt);
                 bulletHit = true;
+
+                enemyIt->health--;
+
+                if (enemyIt->health <= 0) {
+                    enemyIt->active = false;
+
+                    // Material: Default Argument — reward functions
+                    PlayerModule::addScore(player);  // uses default +10
+                    PlayerModule::addCoin(player);    // uses default +5
+                    player.destroyedEnemy++;
+
+                    enemyIt = enemies.erase(enemyIt);
+                } else {
+                    ++enemyIt;
+                }
                 break; // This bullet can only hit one enemy
             } else {
                 ++enemyIt;
@@ -801,7 +819,11 @@ void Game::render() {
             if (cell == GameConfig::EMPTY_SYMBOL) {
                 for (const auto& e : enemies) {
                     if (e.active && e.position.x == x && e.position.y == y) {
-                        cell = GameConfig::ENEMY_SYMBOL;
+                        if (e.health > 1) {
+                            cell = GameConfig::BOSS_SYMBOL; 
+                        } else {
+                            cell = GameConfig::ENEMY_SYMBOL; 
+                        }
                         break;
                     }
                 }
