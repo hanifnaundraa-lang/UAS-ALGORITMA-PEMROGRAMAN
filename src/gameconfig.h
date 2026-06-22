@@ -25,7 +25,7 @@ namespace GameConfig {
     constexpr char PLAYER_SYMBOL = 'A';
     constexpr char BULLET_SYMBOL = '|';
     constexpr char ENEMY_SYMBOL = 'V';
-    constexpr char BOSS_SYMBOL = 'W';
+    constexpr char ARMORED_SYMBOL = 'W';
     constexpr char EMPTY_SYMBOL = ' ';
     constexpr char BORDER_SYMBOL = '#';
 }

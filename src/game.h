@@ -44,7 +44,7 @@ private:
     void updateBullets();
     void updateEnemies();
     void spawnEnemy();
-    void spawnBoss();
+    void spawnArmored();
     void checkCollisions();
     void render();
 

@@ -9,8 +9,8 @@ namespace EnemyModule {
     // Spawn a new enemy at random x position at the top
     void spawnEnemy(std::list<Enemy>& enemies);
 
-    // Spawn a new Boss  at random x position at the top
-    void spawnBoss(std::list<Enemy>& enemies);
+    // Spawn a new Armored Enemy at random x position at the top
+    void spawnArmored(std::list<Enemy>& enemies);
 
     // Update all enemies (move downward), remove inactive ones
     // Material: Iterator

@@ -295,7 +295,7 @@ void Game::showControls() {
     std::cout << "      " << GameConfig::PLAYER_SYMBOL << " = Your spaceship\n";
     std::cout << "      " << GameConfig::BULLET_SYMBOL << " = Bullet\n";
     std::cout << "      " << GameConfig::ENEMY_SYMBOL  << " = Enemy\n";
-    std::cout << "      " << GameConfig::BOSS_SYMBOL  << " = Boss\n";
+    std::cout << "      " << GameConfig::ARMORED_SYMBOL  << " = Armored Enemy\n";
     std::cout << "      " << GameConfig::BORDER_SYMBOL  << " = Border\n\n";
 
     std::cout << "\n";
@@ -564,7 +564,7 @@ void Game::startGame() {
             updateBullets();
             updateEnemies();
             spawnEnemy();
-            spawnBoss();
+            spawnArmored();
             checkCollisions();
             render();
             frameCounter++;
@@ -676,11 +676,11 @@ void Game::spawnEnemy() {
 }
 
 // ============================================================
-// Material: Function — Spawn boss periodically
+// Material: Function — Spawn armored enemy periodically
 // ============================================================
-void Game::spawnBoss() {
+void Game::spawnArmored() {
     if (frameCounter % GameConfig::ENEMY_SPAWN_INTERVAL == 0) {
-        EnemyModule::spawnBoss(enemies);
+        EnemyModule::spawnArmored(enemies);
     }
 }
 
@@ -708,9 +708,16 @@ void Game::checkCollisions() {
                 if (enemyIt->health <= 0) {
                     enemyIt->active = false;
 
-                    // Material: Default Argument — reward functions
-                    PlayerModule::addScore(player);  // uses default +10
-                    PlayerModule::addCoin(player);    // uses default +5
+                    // Grant specific rewards based on enemy type
+                    if (enemyIt->isArmored) {
+                        PlayerModule::addScore(player, 20); // Armored gives 20 score
+                        PlayerModule::addCoin(player, 15);  // Armored gives 15 coin
+                    } else {
+                        // Material: Default Argument — reward functions
+                        PlayerModule::addScore(player);  // uses default +10
+                        PlayerModule::addCoin(player);   // uses default +15
+                    }
+                    
                     player.destroyedEnemy++;
 
                     enemyIt = enemies.erase(enemyIt);
@@ -820,7 +827,7 @@ void Game::render() {
                 for (const auto& e : enemies) {
                     if (e.active && e.position.x == x && e.position.y == y) {
                         if (e.health > 1) {
-                            cell = GameConfig::BOSS_SYMBOL; 
+                            cell = GameConfig::ARMORED_SYMBOL; 
                         } else {
                             cell = GameConfig::ENEMY_SYMBOL; 
                         }
