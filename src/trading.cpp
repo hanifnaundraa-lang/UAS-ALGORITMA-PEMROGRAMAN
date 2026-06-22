@@ -10,22 +10,28 @@
 #include <vector>
 #include <conio.h>
 
-// Material: Namespace, Function, File Handling, Exception Handling
-// Trading module — Simulated BTC market using in-game coin
+/*==================================================
+  MATERI: NAMESPACE, FUNCTION, FILE HANDLING, EXCEPTION HANDLING
+==================================================*/
+/*==================================================
+  MODUL TRADING MENYIMULASIKAN TRANSAKSI PEMBELIAN DAN PENJUALAN ASET BTC DI MANA HARGANYA BERUBAH MENGIKUTI WAKTU RILL HARIAN DENGAN DOMPET KOIN.
+==================================================*/
 namespace TradingModule {
 
     // ============================================================
-    // Internal helpers (not declared in header)
+    // Fungsi-fungsi bantuan (helper) untuk memperingkas repetisi dari operasi string, format tanggal/waktu, atau tata letak karakter.
     // ============================================================
 
-    // Material: Inline Function — separator line
+    /*==================================================
+      MATERI: INLINE FUNCTION - GARIS PEMBATAS.
+    ==================================================*/
     static inline void printSeparator() {
         std::cout << "  ";
         for (int i = 0; i < 44; ++i) std::cout << "=";
         std::cout << "\n";
     }
 
-    // Get today's date as YYYY-MM-DD string
+    // Tanggal hari ini bertipe YYYY-MM-DD.
     static std::string getTodayDate() {
         auto now = std::chrono::system_clock::now();
         time_t t = std::chrono::system_clock::to_time_t(now);
@@ -36,7 +42,7 @@ namespace TradingModule {
         return ss.str();
     }
 
-    // Get current timestamp as YYYY-MM-DD HH:MM:SS string
+    // Merekam stempel waktu persis (timestamp) format standar.
     static std::string getTimestamp() {
         auto now = std::chrono::system_clock::now();
         time_t t = std::chrono::system_clock::to_time_t(now);
@@ -48,7 +54,9 @@ namespace TradingModule {
     }
 
     // ============================================================
-    // Material: File Handling & Exception Handling — Wallet persistence
+    /*==================================================
+      MATERI: FILE HANDLING, EXCEPTION HANDLING - MANAGEMEN MUAT DAN SIMPAN MEMORI DARI PROFIL ASET SETIAP AKUN PADA WALLET.
+    ==================================================*/
     // ============================================================
 
     Wallet loadWallet(const std::string& playerName) {
@@ -60,15 +68,17 @@ namespace TradingModule {
 
         std::ifstream file(FileConfig::WALLET_FILE);
         if (!file.is_open()) {
-            // File doesn't exist yet — return default wallet
+            // Jika file baru, hasilkan dompet yang nominalnya dimulai dari saldo permulaan sistem.
             return wallet;
         }
 
         std::string line;
-        // Skip header line
+        // Lebati bacaan header karena berupa teks penamaan kolom.
         std::getline(file, line);
 
-        // Material: File Handling — CSV parsing
+        /*==================================================
+          MATERI: FILE HANDLING - LAKUKAN PARSE TEKS KOLOM FORMAT SEPARATOR KOMA DI MEMORI MENJADI DATA TERSTRUKTUR (STRUCT).
+        ==================================================*/
         while (std::getline(file, line)) {
             if (line.empty()) continue;
 
@@ -80,12 +90,14 @@ namespace TradingModule {
             std::getline(iss, btcStr, ',');
 
             if (name == playerName) {
-                // Material: Exception Handling — safe parsing
+                /*==================================================
+                  MATERI: EXCEPTION HANDLING - MENCEGAH SISTEM PUTUS PAKSA APAKALA TIPE DATA YANG DIBERIKAN TERKOMPROMI/RUSAK.
+                ==================================================*/
                 try {
                     wallet.coin = std::stoi(coinStr);
                     wallet.btc = std::stod(btcStr);
                 } catch (const std::exception&) {
-                    // Invalid data, use defaults
+                    // Gunakan nominal awal karena parameter gagal dilanjutkan/invalid data.
                     wallet.coin = 0;
                     wallet.btc = 0.0;
                 }
@@ -95,20 +107,21 @@ namespace TradingModule {
         }
 
         file.close();
-        // Player not found — return default wallet
+        // Beri respon objek kosong kalau baris tersebut merupakan hak akun punya pemain lain.
         return wallet;
     }
 
     void saveWallet(const Wallet& wallet) {
-        // Read all existing wallets
-        // Material: STL Vector — store all wallet entries
+        /*==================================================
+          MATERI: STL VECTOR - BUFFER BACAAN UNTUK SEMUA DAFTAR KEPEMILIKAN WALLET AGAR TAK ADA AKUN YANG TAK SENGAJA DISAPU SAAT DITIMPA (OVER-WRITE).
+        ==================================================*/
         std::vector<Wallet> allWallets;
         bool playerFound = false;
 
         std::ifstream inFile(FileConfig::WALLET_FILE);
         if (inFile.is_open()) {
             std::string line;
-            // Skip header
+            // Lewati pembacaan informasi header struktur CSV karena kita sudah menetapkan ini di variabel sistem.
             std::getline(inFile, line);
 
             while (std::getline(inFile, line)) {
@@ -132,7 +145,7 @@ namespace TradingModule {
                 }
                 w.eth = 0.0;
 
-                // Update if this is the current player
+                // Kalau sesuai maka kita ubah objek struct-nya langsung.
                 if (name == wallet.playerName) {
                     w = wallet;
                     playerFound = true;
@@ -143,13 +156,14 @@ namespace TradingModule {
             inFile.close();
         }
 
-        // If player wasn't found, add them
+        // Bila status baris nama ini nihil, berarti sistem diwajibkan menulis pendatang baru pada ujung akhir urutan tersebut (append).
         if (!playerFound) {
             allWallets.push_back(wallet);
         }
 
-        // Write all wallets back
-        // Material: File Handling — write CSV
+        /*==================================================
+          MATERI: FILE HANDLING - ROMBAK ISI FILE DENGAN PEMBARUAN BARIS BERFORMATKAN CSV YANG DIRAKIT ULANG DARI OBJEK STRUCT BARU.
+        ==================================================*/
         std::ofstream outFile(FileConfig::WALLET_FILE);
         if (!outFile.is_open()) {
             throw FileException("Cannot write to " + FileConfig::WALLET_FILE);
@@ -165,7 +179,9 @@ namespace TradingModule {
     }
 
     // ============================================================
-    // Material: File Handling — BTC Price System
+    /*==================================================
+      MATERI: FILE HANDLING - KONFIGURASI SIMULASI UNTUK MENGOLAH PASANG SURUT HARGA PASAR KOMODITI YANG SEDANG DIPERDAGANGKAN DI MARKET.
+    ==================================================*/
     // ============================================================
 
     int getCurrentBTCPrice() {
@@ -173,11 +189,11 @@ namespace TradingModule {
         std::string lastDate;
         std::string lastPriceStr;
 
-        // Read market history to find today's price
+        // Melacak ke pangkalan rekaman pergerakan harga komoditas (mis: data harian market).
         std::ifstream inFile(FileConfig::MARKET_HISTORY_FILE);
         if (inFile.is_open()) {
             std::string line;
-            // Skip header
+            // Mengabaikan struktur baris penamaan file.
             std::getline(inFile, line);
 
             while (std::getline(inFile, line)) {
@@ -190,19 +206,19 @@ namespace TradingModule {
             inFile.close();
         }
 
-        // If today's price already exists, return it
+        // Mengirim balik parameter jika sudah tersedia nilainya agar tidak berganti ganti nominal setiap detiknya pada sesi/hari operasi ini dijalankan (mengembalikan status persisten).
         if (lastDate == today && !lastPriceStr.empty()) {
             try {
                 return std::stoi(lastPriceStr);
             } catch (...) {
-                // Fall through to generate new price
+                // Beralih kembali agar di-generate-ulang jika terjadi error dalam pemilahan (stod).
             }
         }
 
-        // Generate new random BTC price: 30000 - 70000
+        // Menghasilkan bilangan komoditas fluktuasi pasaran secara otomatis menggunakan RNG sistem dalam interval kewajaran (bound rand).
         int newPrice = (rand() % 40001) + 30000;
 
-        // Append to market history file
+        // Merekam pergerakan harian yang dinamis tadi jadi daftar tetap terhubung persisten.
         std::ofstream outFile(FileConfig::MARKET_HISTORY_FILE, std::ios::app);
         if (outFile.is_open()) {
             outFile << today << "," << newPrice << "\n";
@@ -213,7 +229,7 @@ namespace TradingModule {
     }
 
     // ============================================================
-    // Secret Function — Force update today's BTC price
+    // Metode pembantu pengujian/testing tersembunyi yang berguna menyimulasikan/memaksa pergantian acak harian pada hari yang identik saat debugging program.
     // ============================================================
     void forceUpdateBTCPrice() {
         std::string today = getTodayDate();
@@ -256,7 +272,9 @@ namespace TradingModule {
     }
 
     // ============================================================
-    // Material: Function — Display wallet info
+    /*==================================================
+      MATERI: FUNCTION - MENYAJIKAN ANTARMUKA PORTOFOLIO WALLET PADA LAYAR PENGGUNA (CLI).
+    ==================================================*/
     // ============================================================
 
     void displayWallet(const Wallet& wallet) {
@@ -270,7 +288,9 @@ namespace TradingModule {
     }
 
     // ============================================================
-    // Material: Function — Display current market price
+    /*==================================================
+      MATERI: FUNCTION - MENYAJIKAN ANTARMUKA NILAI TICKER INSTRUMEN FINANSIAL DI BURSA.
+    ==================================================*/
     // ============================================================
 
     void displayMarket() {
@@ -285,7 +305,9 @@ namespace TradingModule {
     }
 
     // ============================================================
-    // Material: Function, Exception Handling — Buy BTC
+    /*==================================================
+      MATERI: FUNCTION, EXCEPTION HANDLING - OPERASI PEMESANAN BUY ORDER INSTRUMEN KOMODITI BTC DENGAN PEMROSESAN PEMBATASAN PENGECEKAN ASET PEMAIN DI DOMPET SUPAYA SISTEM TIDAK OVERSPEND (SALDONYA NGAWUR).
+    ==================================================*/
     // ============================================================
 
     void buyBTC(Wallet& wallet) {
@@ -298,7 +320,9 @@ namespace TradingModule {
         std::cout << "    How much BTC to buy: ";
         std::cin >> amount;
 
-        // Material: Exception Handling — input validation
+        /*==================================================
+          MATERI: EXCEPTION HANDLING - MENANGKIS CRASH MEMORI JIKA PENGGUNA TANPA SENGAJA / ISENG MEMASUKKAN HURUF / SIMBOL LAIN PADA FORM ANGKA INI.
+        ==================================================*/
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(10000, '\n');
@@ -318,7 +342,7 @@ namespace TradingModule {
             return;
         }
 
-        // Validate coin balance
+        // Memastikan stok nominal mencukupi batas minim dari nilai aset pembelian.
         if (wallet.coin < totalCost) {
             std::cout << "\n    " << GameColor::TXT_ERROR << "[Error] Not enough coin!" << GameColor::RESET
                       << " Need " << totalCost
@@ -326,15 +350,16 @@ namespace TradingModule {
             return;
         }
 
-        // Execute transaction
+        // Menjalankan eksekusi perhitungan transfer koin antar dompet pertukaran dan pemotongan jumlah (swap) portofolio akhir.
         wallet.coin -= totalCost;
         wallet.btc += amount;
 
-        // Save wallet
+        // Melegitimasi pengesahan akhir (commit/save) pembaruan database dompet akun saat selesai order agar transaksi yang berlangsung tidak menjadi bayang bayang ulangan (bocor).
         saveWallet(wallet);
 
-        // Save trade history
-        // Material: File Handling — append trade record
+        /*==================================================
+          MATERI: FILE HANDLING - MEREKAM REKAM SEJARAH PEMBELIAN TERVALIDASI INI AGAR DAPAT DIPAMPANG DAN DIBACA KAPAN KAPAN SAJA DARI LOG ARSIP KHUSUS PEMAIN (AUDIT HISTORIS).
+        ==================================================*/
         std::ofstream tradeFile(FileConfig::TRADE_HISTORY_FILE, std::ios::app);
         if (tradeFile.is_open()) {
             tradeFile << getTodayDate() << ","
@@ -353,7 +378,9 @@ namespace TradingModule {
     }
 
     // ============================================================
-    // Material: Function, Exception Handling — Sell BTC
+    /*==================================================
+      MATERI: FUNCTION, EXCEPTION HANDLING - OPERASI PEMESANAN SELL ORDER, MEKANISME PELEPASAN (LIKUIDASI) POSISI KEPEMILIKAN ASET PASAR UNTUK DIAMBIL UNTUNG PADA KOIN IN-GAME AGAR PORTOFOLIONYA TERTRANSLASI KEMBALI DALAM SALDO KOIN BIASA.
+    ==================================================*/
     // ============================================================
 
     void sellBTC(Wallet& wallet) {
@@ -367,7 +394,9 @@ namespace TradingModule {
         std::cout << "    How much BTC to sell: ";
         std::cin >> amount;
 
-        // Material: Exception Handling — input validation
+        /*==================================================
+          MATERI: EXCEPTION HANDLING - FILTER INPUT HURUF MAUPUN SPASI (CLEAR INPUT STREAM DAN IGNORE STREAM) AKIBAT KESALAHAN JARI PADA COMMAND BAR / CLI SUPAYA PROMPT TETAP VALID / TAK MASUK KE LOOP TIDAK HENTI HENTI.
+        ==================================================*/
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(10000, '\n');
@@ -380,7 +409,7 @@ namespace TradingModule {
             return;
         }
 
-        // IMPORTANT: Validate BTC balance BEFORE modifying coin
+        // Memastikan akun saldo BTC nya sendiri bukan merupakan fiktif lalu divalidasi kebenaran ukurannya di portofolio agar akun tak berakhir melakukan pelepasan posisi bodong yang mustahil (mengeluarkan exception logis pada proses pengecekan margin aset di Wallet).
         if (wallet.btc < amount) {
             std::cout << "\n    " << GameColor::TXT_ERROR << "[Error] Not enough BTC!" << GameColor::RESET
                       << " You have " << std::fixed << std::setprecision(4)
@@ -390,14 +419,14 @@ namespace TradingModule {
 
         int totalEarned = static_cast<int>(amount * btcPrice);
 
-        // Execute transaction
+        // Pengurangan pada rasio komoditi bursa, lalu mengalirkan akumulasi total hasil ke mata uang biasa milik pengguna dan membalikkannya jadi pemasukan akun tersebut.
         wallet.btc -= amount;
         wallet.coin += totalEarned;
 
-        // Save wallet
+        // Mendaftarkan transaksi penyelesaian ini (selesai swap likuidasi / profit pengambilan margin) menuju penyimpanan profil database dari Player di dalam CSV Wallet untuk mencegah duplikasi atau penghangusan portofolio ketika pengguna mendadak meninggalkan atau keluar / log-out aplikasi pasca pencairan selesai.
         saveWallet(wallet);
 
-        // Save trade history
+        // Menulis bukti transfer ke dalam file buku rekap penjualan pribadi historis milik pemain ini sendiri.
         std::ofstream tradeFile(FileConfig::TRADE_HISTORY_FILE, std::ios::app);
         if (tradeFile.is_open()) {
             tradeFile << getTodayDate() << ","
@@ -416,7 +445,9 @@ namespace TradingModule {
     }
 
     // ============================================================
-    // Material: File Handling, Iterator — Show trade history
+    /*==================================================
+      MATERI: FILE HANDLING, ITERATOR - ANTARMUKA MENCETAK BUKTI ARSIP DARI SEGALA JENIS PEMINDAHAN MARGIN PORTOFOLIO ATAU BUKTI RIWAYAT PEMROSESAN / LAPORAN ORDER HISTORIKAL PEMAIN YANG TEREKAM PADA PEMBUKUAN / CSV LEDGER PERMAINAN.
+    ==================================================*/
     // ============================================================
 
     void showTradeHistory() {
@@ -428,10 +459,10 @@ namespace TradingModule {
         }
 
         std::string line;
-        // Skip header
+        // Lewati pengindeksan label kolom CSV.
         std::getline(file, line);
 
-        // Check if there's any data after header
+        // Menjadi sakelar atau pengingat parameter logikal pembaca (bool flag), untuk memeriksa setidaknya keberadaan transaksi satu pun dalam tabel yang sedang dibongkar.
         bool hasData = false;
 
         printSeparator();
@@ -451,7 +482,9 @@ namespace TradingModule {
         for (int i = 0; i < 44; ++i) std::cout << "-";
         std::cout << "\n";
 
-        // Material: File Handling — read CSV line by line
+        /*==================================================
+          MATERI: FILE HANDLING - MENSINKRONISASIKAN SATU PER-SATU ALUR FORMAT STRING BERKOMA MENJADI ELEMEN DATA VISUAL ANTAR-KOLOM DI LAYER PEMANTAUAN PEMAIN SECARA LINIER.
+        ==================================================*/
         while (std::getline(file, line)) {
             if (line.empty()) continue;
             hasData = true;
@@ -486,7 +519,9 @@ namespace TradingModule {
     }
 
     // ============================================================
-    // Material: Function — Trading menu entry point
+    /*==================================================
+      MATERI: FUNCTION - TITIK PELUNCURAN AWAL DAN MENU INDUK TEMPAT BERSARANGNYA TOMBOL INTERAKSI ANTARA PORTOFOLIO MARKET CRYPTO / BURSA, PEMANTAUAN WALLET DOMPET KOIN, BESERTA MENU ARSIP REKAMAN ORDER TRANSAKSI PENJUALAN ASET YANG TERMODULASI DENGAN BAIK DAN AMAN DI DALAM SUB SISTEM TRADING.
+    ==================================================*/
     // ============================================================
 
     void menuTrading(Wallet& wallet) {
@@ -543,7 +578,7 @@ namespace TradingModule {
                     _getch();
                     break;
                 case '0':
-                    // Save wallet before exiting trading menu
+                    // Memanggil trigger save secara otomatis sebagai garansi / asuransi apabila program dihentikan sesaat setelah keluar bursa tanpa menyimpan lebih dari satu posisi order ganda, hal ini untuk menahan portofolio pemain.
                     saveWallet(wallet);
                     break;
                 default:

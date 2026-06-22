@@ -1,6 +1,8 @@
 #include "bullet.h"
 
-// Material: STL Vector & Iterator
+/*==================================================
+  MODUL BULLET
+==================================================*/
 namespace BulletModule {
 
     void spawnBullet(std::vector<Bullet>& bullets, int x, int y) {
@@ -12,16 +14,18 @@ namespace BulletModule {
     }
 
     void updateBullets(std::vector<Bullet>& bullets) {
-        // Material: Iterator — update and remove inactive bullets
+        /*==================================================
+          MATERI: ITERATOR UNTUK MEMPERBARUI DAN MENGHAPUS PELURU YANG TIDAK AKTIF.
+        ==================================================*/
         for (auto it = bullets.begin(); it != bullets.end(); ) {
-            it->position.y -= 1;  // Move bullet upward
+            it->position.y -= 1;  // Menggerakkan peluru ke atas.
 
-            // Deactivate if bullet moves above the arena
+            // Menonaktifkan peluru jika bergerak ke atas luar arena.
             if (it->position.y < 0) {
                 it->active = false;
             }
 
-            // Remove inactive bullets
+            // Menghapus peluru yang tidak aktif.
             if (!it->active) {
                 it = bullets.erase(it);
             } else {

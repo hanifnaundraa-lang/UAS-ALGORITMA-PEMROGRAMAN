@@ -1,7 +1,9 @@
 #include "player.h"
 #include "gameutils.h"
 
-// Material: Function, Struct, Pointer & Reference
+/*==================================================
+  MODUL PLAYER
+==================================================*/
 namespace PlayerModule {
 
     void initPlayer(Player& player, const std::string& name) {
@@ -16,7 +18,9 @@ namespace PlayerModule {
     }
 
     void moveLeft(Player& player) {
-        // Material: Function Template — clampValue
+        /*==================================================
+          MATERI: FUNCTION TEMPLATE
+        ==================================================*/
         player.position.x = GameUtils::clampValue(player.position.x - 1, 0, GameConfig::ARENA_WIDTH - 1);
     }
 
@@ -24,7 +28,9 @@ namespace PlayerModule {
         player.position.x = GameUtils::clampValue(player.position.x + 1, 0, GameConfig::ARENA_WIDTH - 1);
     }
 
-    // Material: Default Argument
+    /*==================================================
+      MATERI: DEFAULT ARGUMENT
+    ==================================================*/
     void addScore(Player& player, int points) {
         if (player.loadout.scoreBoostActive) {
             player.score += (points * 2);
@@ -43,7 +49,7 @@ namespace PlayerModule {
 
     void takeDamage(Player& player, int damage) {
         if (player.loadout.shieldActive) {
-            player.loadout.shieldActive = false; // Block damage
+            player.loadout.shieldActive = false; // Menahan serangan.
             return;
         }
         player.health -= damage;

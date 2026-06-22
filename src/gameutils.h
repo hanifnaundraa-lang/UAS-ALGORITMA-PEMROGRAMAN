@@ -3,10 +3,12 @@
 #include <iostream>
 #include <windows.h>
 
-// Material: Namespace, Function, Default Argument & Inline Function, Function Template
+/*==================================================
+  MATERI: NAMESPACE, FUNCTION, DEFAULT ARGUMENT & INLINE FUNCTION, FUNCTION TEMPLATE
+==================================================*/
 namespace GameUtils {
 
-    // Initialize console for ANSI color support
+    // Menginisialisasi konsol Windows untuk mendukung warna ANSI
     inline void initConsole() {
         HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
         if (hOut == INVALID_HANDLE_VALUE) return;
@@ -17,7 +19,9 @@ namespace GameUtils {
         SetConsoleOutputCP(CP_UTF8);
     }
 
-    // Material: Function Template
+    /*==================================================
+      MATERI: FUNCTION TEMPLATE
+    ==================================================*/
     template <typename T>
     T clampValue(T value, T minVal, T maxVal) {
         if (value < minVal) return minVal;
@@ -25,27 +29,39 @@ namespace GameUtils {
         return value;
     }
 
-    // Material: Inline Function
+    /*==================================================
+      MATERI: INLINE FUNCTION
+    ==================================================*/
     inline bool isWithinBounds(int x, int y, int width, int height) {
         return x >= 0 && x < width && y >= 0 && y < height;
     }
 
-    // Material: Function Overloading — clear screen
+    /*==================================================
+      MATERI: FUNCTION OVERLOADING
+    ==================================================*/
+    /*==================================================
+      FUNGSI: Membersihkan layar terminal
+    ==================================================*/
     inline void clearScreen() {
-        // Use Windows API for flicker-free rendering
+        // Menggunakan Windows API untuk rendering tanpa flicker
         HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
         COORD topLeft = {0, 0};
         SetConsoleCursorPosition(hConsole, topLeft);
     }
 
-    // Material: Function Overloading — set cursor position
+    /*==================================================
+      MATERI: FUNCTION OVERLOADING
+    ==================================================*/
+    /*==================================================
+      FUNGSI: Mengatur posisi kursor di terminal
+    ==================================================*/
     inline void setCursorPosition(int x, int y) {
         HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
         COORD pos = {static_cast<SHORT>(x), static_cast<SHORT>(y)};
         SetConsoleCursorPosition(hConsole, pos);
     }
 
-    // Hide/show cursor for cleaner rendering
+    // Menyembunyikan atau menampilkan kursor untuk rendering yang lebih bersih
     inline void setCursorVisible(bool visible) {
         HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
         CONSOLE_CURSOR_INFO cursorInfo;
@@ -54,12 +70,19 @@ namespace GameUtils {
         SetConsoleCursorInfo(hConsole, &cursorInfo);
     }
 
-    // Material: Default Argument
+    /*==================================================
+      MATERI: DEFAULT ARGUMENT
+    ==================================================*/
     inline int calculateReward(int baseReward, int multiplier = 1) {
         return baseReward * multiplier;
     }
 
-    // Material: Function Overloading — print message
+    /*==================================================
+      MATERI: FUNCTION OVERLOADING
+    ==================================================*/
+    /*==================================================
+      FUNGSI: Mencetak pesan ke tengah layar
+    ==================================================*/
     inline void printCentered(const std::string& text, int width) {
         int padding = (width - static_cast<int>(text.length())) / 2;
         if (padding < 0) padding = 0;
@@ -67,7 +90,12 @@ namespace GameUtils {
         std::cout << text;
     }
 
-    // Material: Function Overloading — print with newline
+    /*==================================================
+      MATERI: FUNCTION OVERLOADING
+    ==================================================*/
+    /*==================================================
+      FUNGSI: Mencetak pesan ke tengah layar dengan baris baru
+    ==================================================*/
     inline void printCentered(const std::string& text, int width, bool newline) {
         printCentered(text, width);
         if (newline) std::cout << '\n';

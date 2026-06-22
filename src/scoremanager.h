@@ -3,16 +3,18 @@
 #include <vector>
 #include <string>
 
-// Placeholder for Leaderboard module — will be implemented by Member 2
+/*==================================================
+  MODUL LEADERBOARD
+==================================================*/
 namespace ScoreManager {
 
-    // Save a player's score to leaderboard CSV
+    // Menyimpan skor pemain ke dalam file CSV leaderboard.
     void saveScore(const PlayerScore& score);
 
-    // Load all scores from leaderboard CSV
+    // Memuat seluruh data skor dari file CSV leaderboard.
     std::vector<PlayerScore> loadScores();
 
-    // Run the interactive leaderboard menu
+    // Menjalankan menu interaktif untuk leaderboard.
     void runLeaderboardMenu();
 
 } // namespace ScoreManager

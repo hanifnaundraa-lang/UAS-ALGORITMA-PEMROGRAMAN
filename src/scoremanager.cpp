@@ -12,14 +12,14 @@ using namespace std;
 namespace ScoreManager {
 
     void saveScore(const PlayerScore& score) {
-        // Open file in append mode
+        // Membuka file dalam mode append.
         ofstream outFile(FileConfig::LEADERBOARD_FILE, ios::app);
         
         if (!outFile.is_open()) {
             throw runtime_error("Error: Unable to open " + FileConfig::LEADERBOARD_FILE + " for writing.");
         }
 
-        // Format: name,score,destroyedEnemy,dateTime
+        // Format data: name,score,destroyedEnemy,dateTime
         outFile << score.name << ","
                 << score.score << ","
                 << score.destroyedEnemy << ","
@@ -33,7 +33,7 @@ namespace ScoreManager {
         ifstream inFile(FileConfig::LEADERBOARD_FILE);
 
         if (!inFile.is_open()) {
-            return scores; // Return empty vector if file doesn't exist
+            return scores; // Mengembalikan vektor kosong jika file tidak ditemukan.
         }
 
         string line;
@@ -47,7 +47,7 @@ namespace ScoreManager {
 
             getline(ss, name, ',');
             
-            // Check and skip header
+            // Mengabaikan baris header pada file CSV.
             if (isHeader && name == "name") {
                 isHeader = false;
                 continue;
@@ -62,7 +62,9 @@ namespace ScoreManager {
             ps.name = name;
             ps.dateTime = dateTime;
 
-            // Exception handling for corrupted numbers
+            /*==================================================
+              MATERI: EXCEPTION HANDLING UNTUK DATA ANGKA YANG TIDAK VALID.
+            ==================================================*/
             try {
                 ps.score = stoi(scoreStr);
                 ps.destroyedEnemy = stoi(enemiesStr);
@@ -76,9 +78,7 @@ namespace ScoreManager {
         return scores;
     }
 
-    // ============================================================
-    // Feature: Display Leaderboard View (Rank Display)
-    // ============================================================
+    // Menampilkan daftar peringkat skor tertinggi.
     void displayLeaderboardView(vector<PlayerScore>& scores) {
         if (scores.empty()) {
             cout << "    (No high scores recorded yet. Play a game!)\n\n";
@@ -106,9 +106,7 @@ namespace ScoreManager {
         cout << "\n";
     }
 
-    // ============================================================
-    // Feature 1: Search Player
-    // ============================================================
+    // Mencari data pemain berdasarkan nama.
     void searchPlayer(const vector<PlayerScore>& scores) {
         cout << "\n  Enter Player Name: ";
         string target;
@@ -117,7 +115,9 @@ namespace ScoreManager {
         string lowerTarget = target;
         transform(lowerTarget.begin(), lowerTarget.end(), lowerTarget.begin(), ::tolower);
         
-        // Material: Find & Lambda Expression
+        /*==================================================
+          MATERI: STL FIND & LAMBDA EXPRESSION
+        ==================================================*/
         auto it = find_if(scores.begin(), scores.end(), [&](const PlayerScore& s) {
             string lowerName = s.name;
             transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::tolower);
@@ -135,9 +135,7 @@ namespace ScoreManager {
         }
     }
 
-    // ============================================================
-    // Feature 2: Statistics Menu
-    // ============================================================
+    // Menampilkan statistik leaderboard (total pemain, skor tertinggi, terendah, rata-rata).
     void showStatistics(const vector<PlayerScore>& scores) {
         cout << "\n  " << GameColor::MENU_TITLE << "===== LEADERBOARD STATS =====" << GameColor::RESET << "\n\n";
         if (scores.empty()) {
@@ -152,7 +150,9 @@ namespace ScoreManager {
         string namaMin = scores[0].name;
         long long sumScore = 0;
 
-        // Material: Iterator
+        /*==================================================
+          MATERI: ITERATOR
+        ==================================================*/
         for (auto it = scores.begin(); it != scores.end(); ++it) {
             string lowerName = it->name;
             transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::tolower);
@@ -180,9 +180,7 @@ namespace ScoreManager {
         cout << "  Average Score : " << avgScore << "\n";
     }
 
-    // ============================================================
-    // Feature 3: Personal Best
-    // ============================================================
+    // Menampilkan skor terbaik dari pemain tertentu.
     void showPersonalBest(const vector<PlayerScore>& scores) {
         cout << "\n  Enter Player Name: ";
         string target;
@@ -193,7 +191,9 @@ namespace ScoreManager {
         int bestScore = -1;
         string actualName = "";
 
-        // Material: Count & Lambda Expression
+        /*==================================================
+          MATERI: STL COUNT & LAMBDA EXPRESSION
+        ==================================================*/
         int gamesPlayed = count_if(scores.begin(), scores.end(), [&](const PlayerScore& s) {
             string lowerName = s.name;
             transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::tolower);
@@ -217,9 +217,7 @@ namespace ScoreManager {
         }
     }
 
-    // ============================================================
-    // Feature 5: Hall of Fame
-    // ============================================================
+    // Menampilkan pemain dengan skor tertinggi secara keseluruhan.
     void showHallOfFame(const vector<PlayerScore>& scores) {
         cout << "\n  " << GameColor::MENU_TITLE << "===== HALL OF FAME =====" << GameColor::RESET << "\n\n";
         if (scores.empty()) {
@@ -227,7 +225,7 @@ namespace ScoreManager {
             return;
         }
 
-        auto best = scores.begin(); // already sorted descending
+        auto best = scores.begin(); // Sudah diurutkan secara menurun.
 
         cout << "  " << GameColor::TXT_SUCCESS << "***  The Greatest Player of All Time  ***" << GameColor::RESET << "\n\n";
         cout << "  Player : " << best->name << "\n";
@@ -235,14 +233,14 @@ namespace ScoreManager {
         cout << "  Date   : " << best->dateTime << "\n";
     }
 
-    // ============================================================
-    // Main Leaderboard Menu Runner
-    // ============================================================
+    // Menjalankan loop menu utama untuk leaderboard.
     void runLeaderboardMenu() {
         vector<PlayerScore> scores = loadScores();
 
-        // Sort globally once for accurate rank indexing
-        // Material: Sort & Lambda Expression
+        // Mengurutkan secara global satu kali untuk indeks peringkat yang akurat.
+        /*==================================================
+          MATERI: STL SORT & LAMBDA EXPRESSION
+        ==================================================*/
         sort(scores.begin(), scores.end(), [](const PlayerScore& a, const PlayerScore& b) {
             return a.score > b.score; 
         });

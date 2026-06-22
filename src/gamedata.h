@@ -1,8 +1,12 @@
 #pragma once
 #include <string>
 
-// Material: Struct, Pointer & Reference
-// Shared data structures for Astro Strike
+/*==================================================
+  MATERI: STRUCT, POINTER & REFERENCE
+==================================================*/
+/*==================================================
+  FUNGSI: Struktur data bersama untuk Astro Strike
+==================================================*/
 
 struct Position {
     int x;
@@ -42,15 +46,17 @@ struct Enemy {
     bool isArmored;
 };
 
-// Structs for future modules (inventory, shop, trading, gacha, leaderboard)
+/*==================================================
+  FUNGSI: Struktur data untuk modul inventory, shop, trading, gacha, dan leaderboard
+==================================================*/
 struct Item {
     int id;
     std::string name;
     std::string type;
     int price;
-    std::string effect;     // untuk efek item, misal "heal", "damage boost", dll
+    std::string effect;     // [LEVEL 3] Efek item, misalnya "heal", "damage boost", dll
     int quantity;
-    int stock;              // jumlah stok di shop, -1 = unlimited
+    int stock;              // [LEVEL 3] Jumlah stok di shop, -1 = tidak terbatas
 };
 
 struct PlayerScore {
@@ -83,7 +89,9 @@ struct TradeRecord {
     int total;
 };
 
-// Gacha reward pool entry (loaded from gacha_pool.csv)
+/*==================================================
+  FUNGSI: Entri pool hadiah gacha (dimuat dari gacha_pool.csv)
+==================================================*/
 struct GachaReward {
     int id;
     std::string name;
@@ -92,7 +100,9 @@ struct GachaReward {
     int weight;
 };
 
-// Gacha history record (saved to gacha_history.csv)
+/*==================================================
+  FUNGSI: Catatan riwayat gacha (disimpan ke gacha_history.csv)
+==================================================*/
 struct GachaRecord {
     std::string date;
     std::string playerName;

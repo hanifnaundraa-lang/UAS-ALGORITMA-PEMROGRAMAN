@@ -1,3 +1,8 @@
+/*==================================================
+  MODUL : game.h
+  FUNGSI:
+  - Deklarasi class Game
+==================================================*/
 #pragma once
 #include "gamedata.h"
 #include "gameconfig.h"
@@ -15,14 +20,18 @@
 #include <list>
 #include <string>
 
-// Material: STL Vector & List
-// The Game class orchestrates the entire terminal game loop.
-
+/*==================================================
+  MATERI: STL Vector & List
+  Class Game mengatur seluruh game loop terminal.
+==================================================*/
 class Game {
 public:
     Game();
 
-    // Material: Function — main entry points
+    /*==================================================
+      MATERI: Function
+      Titik masuk utama eksekusi loop game.
+    ==================================================*/
     void run();
 
 private:
@@ -50,10 +59,29 @@ private:
 
     // --- State ---
     Player player;
-    Wallet wallet;                  // Material: Struct — wallet for trading
-    std::vector<Item> inventory;    // Material: STL Vector - item yang dimiliki pemain
-    std::vector<Bullet> bullets;    // Material: STL Vector
-    std::list<Enemy> enemies;       // Material: STL List
+    /*==================================================
+      MATERI: Struct
+      Menyimpan data wallet trading pemain.
+    ==================================================*/
+    Wallet wallet;
+
+    /*==================================================
+      MATERI: STL Vector
+      Menyimpan daftar item yang dimiliki pemain.
+    ==================================================*/
+    std::vector<Item> inventory;
+
+    /*==================================================
+      MATERI: STL Vector
+      Menyimpan daftar peluru aktif.
+    ==================================================*/
+    std::vector<Bullet> bullets;
+
+    /*==================================================
+      MATERI: STL List
+      Menyimpan daftar musuh.
+    ==================================================*/
+    std::list<Enemy> enemies;
     bool isRunning;
     bool isPaused;
     int frameCounter;

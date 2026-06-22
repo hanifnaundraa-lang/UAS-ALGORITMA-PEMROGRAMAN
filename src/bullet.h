@@ -2,14 +2,18 @@
 #include "gamedata.h"
 #include <vector>
 
-// Material: STL Vector, Function declarations
+/*==================================================
+  MODUL BULLET
+==================================================*/
 namespace BulletModule {
 
-    // Spawn a new bullet at the given position
+    // Memunculkan peluru baru pada posisi tertentu.
     void spawnBullet(std::vector<Bullet>& bullets, int x, int y);
 
-    // Update all bullets (move upward), remove inactive ones
-    // Material: Iterator
+    // Memperbarui posisi semua peluru (bergerak ke atas), dan menghapus peluru yang tidak aktif.
+    /*==================================================
+      MATERI: ITERATOR
+    ==================================================*/
     void updateBullets(std::vector<Bullet>& bullets);
 
 } // namespace BulletModule

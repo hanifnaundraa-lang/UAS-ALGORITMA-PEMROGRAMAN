@@ -2,7 +2,9 @@
 #include <stdexcept>
 #include <string>
 
-// Material: Exception Handling
+/*==================================================
+  MATERI: EXCEPTION HANDLING
+==================================================*/
 
 class GameException : public std::runtime_error {
 public:

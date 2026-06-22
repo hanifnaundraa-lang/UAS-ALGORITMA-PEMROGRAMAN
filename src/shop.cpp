@@ -12,19 +12,21 @@
 #include <chrono>
 #include <ctime>
 
-// Materi: Function, STL Vector, Iterator, File Handling, Exception Handling, Lambda, Sort, Find, Count
+/*==================================================
+  MATERI: FUNCTION, STL VECTOR, ITERATOR, FILE HANDLING, EXCEPTION HANDLING, LAMBDA, SORT, FIND, COUNT
+==================================================*/
 namespace ShopModule {
 
     // ============================================================
-    // Feature 4: Load shop catalog sekali dan cache di memory
-    // Feature 3: CSV Validation — skip baris corrupt
-    // Feature 8: Format CSV: id,name,type,price,effect,stock
+    // Memuat katalog toko ke dalam cache memori dari file CSV dengan mengabaikan baris yang korup.
     // ============================================================
     std::vector<Item> loadShopCatalog() {
         std::vector<Item> items;
         std::ifstream inFile(FileConfig::SHOP_ITEMS_FILE);
 
-        // Materi: Exception Handling — file katalog hilang
+        /*==================================================
+          MATERI: EXCEPTION HANDLING - MELEMPAR ERROR JIKA FILE KATALOG TIDAK DITEMUKAN.
+        ==================================================*/
         if (!inFile.is_open()) {
             throw FileException("Unable to open " + FileConfig::SHOP_ITEMS_FILE + ".");
         }
@@ -32,10 +34,10 @@ namespace ShopModule {
         std::string line;
         bool isHeader = true;
         while (std::getline(inFile, line)) {
-            if (isHeader) { isHeader = false; continue; } // skip header
+            if (isHeader) { isHeader = false; continue; } // LEVEL 3: Mengabaikan baris header.
             if (line.empty()) continue;
 
-            // Feature 3: CSV Validation — wrap setiap row di try/catch
+            // Melakukan parse baris CSV dalam try-catch untuk menoleransi kegagalan data.
             try {
                 std::stringstream ss(line);
                 std::string idStr, name, type, priceStr, effect, stockStr;
@@ -55,7 +57,7 @@ namespace ShopModule {
                 item.effect = effect;
                 item.quantity = 0; // catalog entry, bukan inventory
 
-                // Feature 8: Stock — jika kolom stock tidak ada, default unlimited (-1)
+                // Jika kolom stok kosong, diatur secara default sebagai tidak terbatas (-1).
                 if (!stockStr.empty()) {
                     item.stock = std::stoi(stockStr);
                 } else {
@@ -64,7 +66,7 @@ namespace ShopModule {
 
                 items.push_back(item);
             } catch (const std::exception&) {
-                // Feature 3: Skip invalid/corrupted rows, continue
+                // Melompati baris yang rusak secara elegan.
                 continue;
             }
         }
@@ -74,7 +76,7 @@ namespace ShopModule {
     }
 
     // ============================================================
-    // Feature 8: Save updated stock back ke shop_items.csv
+    // Menyimpan katalog (beserta stok yang diperbarui) kembali ke dalam file CSV.
     // ============================================================
     void saveShopCatalog(const std::vector<Item>& catalog) {
         std::ofstream outFile(FileConfig::SHOP_ITEMS_FILE);
@@ -82,10 +84,12 @@ namespace ShopModule {
             throw FileException("Unable to write to " + FileConfig::SHOP_ITEMS_FILE + ".");
         }
 
-        // Feature 8: Updated CSV header with stock column
+        // Menulis header dengan menyertakan kolom stok.
         outFile << "id,name,type,price,effect,stock\n";
 
-        // Material: Iterator — write setiap item
+        /*==================================================
+          MATERI: ITERATOR - MENULIS SETIAP ATRIBUT ITEM KE FILE.
+        ==================================================*/
         for (const auto& item : catalog) {
             outFile << item.id << ","
                     << item.name << ","
@@ -98,8 +102,7 @@ namespace ShopModule {
     }
 
     // ============================================================
-    // Feature 8: Tampilkan katalog shop dengan stok
-    // Feature 1: Tampilkan saldo wallet
+    // Menampilkan katalog beserta nilai stok dan koin di dalam dompet pemain.
     // ============================================================
     void displayShop(const std::vector<Item>& catalog, int walletCoin) {
         std::cout << "\n  ========================================\n";
@@ -114,14 +117,16 @@ namespace ShopModule {
                   << std::setw(10) << "Stock" << "\n";
         std::cout << "    -------------------------------------------------\n";
 
-        // Material: Iterator — tampilkan setiap item
+        /*==================================================
+          MATERI: ITERATOR - MELAKUKAN LOOP UNTUK MENCETAK DETAIL KATALOG.
+        ==================================================*/
         for (const auto& item : catalog) {
             std::cout << "    " << std::left << std::setw(5) << item.id
                       << std::setw(16) << item.name
                       << std::setw(12) << item.type
                       << std::setw(8)  << item.price;
 
-            // Feature 8: Tampilkan stock status
+            // Menerjemahkan angka ke dalam status tampilan stok di layar.
             if (item.stock == -1) {
                 std::cout << std::setw(10) << "Unlimited";
             } else if (item.stock == 0) {
@@ -135,26 +140,30 @@ namespace ShopModule {
     }
 
     // ============================================================
-    // Feature 1, 5, 8: Buy item using Wallet with quantity and stock
+    // Membeli item menggunakan wallet dengan memastikan jumlah kuantitas dan stok yang cukup.
     // ============================================================
     bool buyItem(Wallet& wallet, std::vector<Item>& catalog,
                  std::vector<Item>& inventory, int itemId, int quantity) {
 
-        // Materi: Lambda Expression, Find — cari item di catalog
+        /*==================================================
+          MATERI: LAMBDA EXPRESSION, FIND - MEMERIKSA KEBERADAAN ITEM DI DALAM KATALOG.
+        ==================================================*/
         auto it = std::find_if(catalog.begin(), catalog.end(),
             [&](const Item& shopItem) { return shopItem.id == itemId; });
 
-        // Materi: Exception Handling — item tidak ditemukan
+        /*==================================================
+          MATERI: EXCEPTION HANDLING - MENGHASILKAN EXCEPTION BILA ITEM TIDAK ADA.
+        ==================================================*/
         if (it == catalog.end()) {
             throw GameException("Item ID " + std::to_string(itemId) + " does not exist in the shop.");
         }
 
-        // Feature 5: Validasi quantity
+        // Memastikan angka kuantitas lebih dari nol.
         if (quantity <= 0) {
             throw GameException("Quantity must be greater than 0.");
         }
 
-        // Feature 8: Validasi stock
+        // Memastikan persediaan stok cukup untuk memenuhi pesanan.
         if (it->stock == 0) {
             throw GameException(it->name + " is out of stock!");
         }
@@ -164,10 +173,10 @@ namespace ShopModule {
                 ", requested: " + std::to_string(quantity) + ").");
         }
 
-        // Feature 5: Hitung total cost
+        // Menghitung jumlah koin yang dibutuhkan.
         int totalCost = it->price * quantity;
 
-        // Feature 1: Validasi coin wallet (bukan player.coin)
+        // Memastikan dompet pemain mempunyai koin yang mencukupi.
         if (wallet.coin < totalCost) {
             throw InsufficientFundsException(
                 "Not enough coin to buy " + std::to_string(quantity) + "x " + it->name +
@@ -175,68 +184,77 @@ namespace ShopModule {
                 ", have " + std::to_string(wallet.coin) + ").");
         }
 
-        // Feature 1: Kurangi dari wallet
+        // Mengurangi koin di dalam dompet secara langsung.
         wallet.coin -= totalCost;
 
-        // Feature 8: Kurangi stock (jika bukan unlimited)
+        // Memperbarui stok toko bila sifatnya tidak tak terbatas.
         if (it->stock != -1) {
             it->stock -= quantity;
         }
 
-        // Tambahkan item ke inventory dengan quantity, price, dan effect
-        // Feature 2: Price dan effect disimpan ke inventory
+        // Menambahkan barang ke dalam inventory pemain lengkap dengan informasi dasar.
         Item purchased = *it;
         purchased.quantity = quantity;
         InventoryModule::addItem(inventory, purchased);
 
-        // Feature 9: Save purchase history
+        // Menambahkan rekaman riwayat transaksi.
         saveShopHistory(wallet.playerName, it->name, quantity, totalCost);
 
         return true;
     }
 
     // ============================================================
-    // Feature 10: Sorting System
-    // Material: Sort, Lambda Expression
+    /*==================================================
+      MATERI: SORT, LAMBDA EXPRESSION - SISTEM PENGURUTAN KATALOG TOKO.
+    ==================================================*/
     // ============================================================
 
-    // Material: Lambda — Sort harga terendah
+    /*==================================================
+      MATERI: LAMBDA - MENGURUTKAN HARGA TERENDAH KE TERTINGGI.
+    ==================================================*/
     void sortByPriceAsc(std::vector<Item>& catalog) {
         std::sort(catalog.begin(), catalog.end(),
             [](const Item& a, const Item& b) { return a.price < b.price; });
     }
 
-    // Material: Lambda — Sort harga tertinggi
+    /*==================================================
+      MATERI: LAMBDA - MENGURUTKAN HARGA TERTINGGI KE TERENDAH.
+    ==================================================*/
     void sortByPriceDesc(std::vector<Item>& catalog) {
         std::sort(catalog.begin(), catalog.end(),
             [](const Item& a, const Item& b) { return a.price > b.price; });
     }
 
-    // Material: Lambda — Sort nama A-Z
+    /*==================================================
+      MATERI: LAMBDA - MENGURUTKAN BERDASARKAN ALFABET NAMA A KE Z.
+    ==================================================*/
     void sortByNameAsc(std::vector<Item>& catalog) {
         std::sort(catalog.begin(), catalog.end(),
             [](const Item& a, const Item& b) { return a.name < b.name; });
     }
 
-    // Material: Lambda — Sort nama Z-A
+    /*==================================================
+      MATERI: LAMBDA - MENGURUTKAN BERDASARKAN ALFABET NAMA Z KE A.
+    ==================================================*/
     void sortByNameDesc(std::vector<Item>& catalog) {
         std::sort(catalog.begin(), catalog.end(),
             [](const Item& a, const Item& b) { return a.name > b.name; });
     }
 
-    // Material: Lambda — Sort ID (Low to High)
+    /*==================================================
+      MATERI: LAMBDA - MENGURUTKAN SECARA SEKUENSIAL BERDASAR ID NUMERIK.
+    ==================================================*/
     void sortByIdAsc(std::vector<Item>& catalog) {
         std::sort(catalog.begin(), catalog.end(),
             [](const Item& a, const Item& b) { return a.id < b.id; });
     }
 
     // ============================================================
-    // Feature 9: Save purchase history ke data/shop_history.csv
-    // Format: date,player,item,quantity,total
+    // Menyimpan baris rekaman transaksi pembelian ke dalam file CSV khusus.
     // ============================================================
     void saveShopHistory(const std::string& playerName, const std::string& itemName,
                          int quantity, int totalCost) {
-        // Cek apakah file sudah ada, jika belum buat header
+        // Membuat header otomatis apabila file belum pernah terbuat.
         bool fileExists = false;
         {
             std::ifstream check(FileConfig::SHOP_HISTORY_FILE);
@@ -247,12 +265,12 @@ namespace ShopModule {
         std::ofstream outFile(FileConfig::SHOP_HISTORY_FILE, std::ios::app);
         if (!outFile.is_open()) return;
 
-        // Tulis header jika file baru
+        // Menambahkan kolom header.
         if (!fileExists) {
             outFile << "date,player,item,quantity,total\n";
         }
 
-        // Dapatkan tanggal hari ini
+        // Memproses format tanggal waktu saat ini secara akurat.
         auto now = std::chrono::system_clock::now();
         time_t t = std::chrono::system_clock::to_time_t(now);
         tm* local = localtime(&t);
@@ -268,10 +286,10 @@ namespace ShopModule {
     }
 
     // ============================================================
-    // Feature 1, 4, 5, 8, 9, 10: Interactive shop screen
+    // Membuka layar interaktif utama toko bagi pemain.
     // ============================================================
     void runShop(Wallet& wallet, std::vector<Item>& inventory) {
-        // Feature 4: Load catalog once and cache
+        // Memuat data dari disk hanya sekali saja ke dalam memory cache.
         std::vector<Item> catalog;
         try {
             catalog = loadShopCatalog();
@@ -295,7 +313,7 @@ namespace ShopModule {
             std::cout << choice << "\n";
 
             if (choice == '0') {
-                // Feature 8: Save stock sebelum keluar
+                // Menyimpan perubahan data stok saat pemain keluar dari menu.
                 try {
                     saveShopCatalog(catalog);
                 } catch (const FileException& e) {
@@ -304,7 +322,7 @@ namespace ShopModule {
                 break;
             }
 
-            // Feature 10: Sort menu
+            // Menyediakan sub-menu untuk mengurutkan katalog dengan berbagai opsi.
             if (choice == 's' || choice == 'S') {
                 std::cout << "\n    Sort Options:\n";
                 std::cout << "    [1] Price: Lowest First\n";
@@ -329,7 +347,7 @@ namespace ShopModule {
                 continue;
             }
 
-            // Purchase flow
+            // Alur pembelian barang.
             int itemId = choice - '0';
             if (itemId < 1 || itemId > 9) {
                 std::cout << "\n    " << GameColor::TXT_WARNING << "Invalid choice. Press any key to continue..." << GameColor::RESET;
@@ -337,7 +355,7 @@ namespace ShopModule {
                 continue;
             }
 
-            // Feature 5: Ask for quantity
+            // Meminta pengguna memberikan input kuantitas yang diinginkan.
             std::cout << "\n    Quantity (enter amount): ";
             int qty = 0;
             if (!(std::cin >> qty)) {
