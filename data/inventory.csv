@@ -14,4 +14,4 @@ fabian,4,Damage Boost,Buff,60,damageBoost,10
 fabian,6,Coin Booster,Buff,60,coinBoost,6
 fabian,1,Health Potion,Consumable,30,heal:1,26
 fabian,7,EMP Device,Buff,100,emp:2,7
-fabian,3,Double Bullet,Buff,0,,2
+fabian,3,Double Bullet,Buff,0,,1
