@@ -12,6 +12,7 @@ god,7,EMP Device,Buff,100,emp:2,104
 fabian,2,Shield,Consumable,50,shield:1,11
 fabian,4,Damage Boost,Buff,60,damageBoost,10
 fabian,6,Coin Booster,Buff,60,coinBoost,6
-fabian,1,Health Potion,Consumable,30,heal:1,26
-fabian,7,EMP Device,Buff,100,emp:2,7
-fabian,3,Double Bullet,Buff,0,,1
+fabian,1,Health Potion,Consumable,30,heal:1,24
+fabian,7,EMP Device,Buff,100,emp:2,6
+fabian,3,Double Bullet,Buff,70,doubleBullet,3
+fabian,5,Gacha Ticket,Currency,40,ticket:1,12

@@ -261,7 +261,7 @@ namespace TradingModule {
 
     void displayWallet(const Wallet& wallet) {
         printSeparator();
-        std::cout << "         WALLET - " << wallet.playerName << "\n";
+        std::cout << GameColor::MENU_TITLE << "         WALLET - " << wallet.playerName << GameColor::RESET << "\n";
         printSeparator();
         std::cout << "    Coin : " << wallet.coin << "\n";
         std::cout << "    BTC  : " << std::fixed << std::setprecision(4)
@@ -278,7 +278,7 @@ namespace TradingModule {
         std::string today = getTodayDate();
 
         printSeparator();
-        std::cout << "         BTC MARKET - " << today << "\n";
+        std::cout << GameColor::MENU_TITLE << "         BTC MARKET - " << today << GameColor::RESET << "\n";
         printSeparator();
         std::cout << "    Current BTC Price : " << price << " coin\n";
         printSeparator();
@@ -302,25 +302,25 @@ namespace TradingModule {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(10000, '\n');
-            std::cout << "\n    [Error] Invalid input.\n";
+            std::cout << "\n    " << GameColor::TXT_ERROR << "[Error] Invalid input." << GameColor::RESET << "\n";
             return;
         }
 
         if (amount <= 0) {
-            std::cout << "\n    [Error] Amount must be greater than 0.\n";
+            std::cout << "\n    " << GameColor::TXT_ERROR << "[Error] Amount must be greater than 0." << GameColor::RESET << "\n";
             return;
         }
 
         int totalCost = static_cast<int>(amount * btcPrice);
 
         if (totalCost <= 0) {
-            std::cout << "\n    [Error] Amount too small.\n";
+            std::cout << "\n    " << GameColor::TXT_ERROR << "[Error] Amount too small." << GameColor::RESET << "\n";
             return;
         }
 
         // Validate coin balance
         if (wallet.coin < totalCost) {
-            std::cout << "\n    [Error] Not enough coin!"
+            std::cout << "\n    " << GameColor::TXT_ERROR << "[Error] Not enough coin!" << GameColor::RESET
                       << " Need " << totalCost
                       << ", you have " << wallet.coin << ".\n";
             return;
@@ -347,8 +347,8 @@ namespace TradingModule {
             tradeFile.close();
         }
 
-        std::cout << "\n    [Success] Bought " << std::fixed << std::setprecision(4)
-                  << amount << " BTC for " << totalCost << " coin.\n";
+        std::cout << "\n    " << GameColor::TXT_SUCCESS << "[Success] Bought " << std::fixed << std::setprecision(4)
+                  << amount << " BTC for " << totalCost << " coin!" << GameColor::RESET << "\n";
         displayWallet(wallet);
     }
 
@@ -371,18 +371,18 @@ namespace TradingModule {
         if (std::cin.fail()) {
             std::cin.clear();
             std::cin.ignore(10000, '\n');
-            std::cout << "\n    [Error] Invalid input.\n";
+            std::cout << "\n    " << GameColor::TXT_ERROR << "[Error] Invalid input." << GameColor::RESET << "\n";
             return;
         }
 
         if (amount <= 0) {
-            std::cout << "\n    [Error] Amount must be greater than 0.\n";
+            std::cout << "\n    " << GameColor::TXT_ERROR << "[Error] Amount must be greater than 0." << GameColor::RESET << "\n";
             return;
         }
 
         // IMPORTANT: Validate BTC balance BEFORE modifying coin
         if (wallet.btc < amount) {
-            std::cout << "\n    [Error] Not enough BTC!"
+            std::cout << "\n    " << GameColor::TXT_ERROR << "[Error] Not enough BTC!" << GameColor::RESET
                       << " You have " << std::fixed << std::setprecision(4)
                       << wallet.btc << " BTC.\n";
             return;
@@ -410,7 +410,7 @@ namespace TradingModule {
             tradeFile.close();
         }
 
-        std::cout << "\n    [Success] Sold " << std::fixed << std::setprecision(4)
+        std::cout << "\n    " << GameColor::TXT_SUCCESS << "[Success] Sold " << std::fixed << std::setprecision(4)
                   << amount << " BTC for " << totalEarned << " coin.\n";
         displayWallet(wallet);
     }
@@ -435,7 +435,7 @@ namespace TradingModule {
         bool hasData = false;
 
         printSeparator();
-        std::cout << "              TRADE HISTORY\n";
+        std::cout << GameColor::MENU_TITLE << "              TRADE HISTORY\n" << GameColor::RESET;
         printSeparator();
 
         std::cout << "  " << std::left
@@ -495,7 +495,7 @@ namespace TradingModule {
         do {
             system("cls");
             printSeparator();
-            std::cout << "           TRADING MARKET\n";
+            std::cout << GameColor::MENU_TITLE << "           TRADING MARKET\n" << GameColor::RESET;
             printSeparator();
             std::cout << "\n";
             std::cout << "    [1] View Wallet\n";

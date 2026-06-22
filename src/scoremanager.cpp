@@ -126,12 +126,12 @@ namespace ScoreManager {
 
         if (it != scores.end()) {
             int rank = distance(scores.begin(), it) + 1;
-            cout << "\n  Player Found\n\n";
+            cout << "\n  " << GameColor::TXT_SUCCESS << "Player Found" << GameColor::RESET << "\n\n";
             cout << "  Name  : " << it->name << "\n";
             cout << "  Rank  : " << rank << "\n";
             cout << "  Score : " << it->score << "\n";
         } else {
-            cout << "\n  Player not found.\n";
+            cout << "\n  " << GameColor::TXT_WARNING << "Player not found." << GameColor::RESET << "\n";
         }
     }
 
@@ -139,16 +139,17 @@ namespace ScoreManager {
     // Feature 2: Statistics Menu
     // ============================================================
     void showStatistics(const vector<PlayerScore>& scores) {
-        cout << "\n  ===== LEADERBOARD STATS =====\n\n";
+        cout << "\n  " << GameColor::MENU_TITLE << "===== LEADERBOARD STATS =====" << GameColor::RESET << "\n\n";
         if (scores.empty()) {
             cout << "  No data available.\n";
             return;
         }
 
         vector<string> uniquePlayers;
-        string namaMax, namaMin;
-        int maxScore = 0;
+        int maxScore = scores[0].score;
         int minScore = scores[0].score;
+        string namaMax = scores[0].name;
+        string namaMin = scores[0].name;
         long long sumScore = 0;
 
         // Material: Iterator
@@ -160,8 +161,14 @@ namespace ScoreManager {
                 uniquePlayers.push_back(lowerName);
             }
 
-            if (it->score > maxScore) maxScore = it->score; namaMax = it->name;
-            if (it->score < minScore) minScore = it->score; namaMin = it->name;
+            if (it->score > maxScore) {
+                maxScore = it->score;
+                namaMax = it->name;
+            }
+            if (it->score < minScore) {
+                minScore = it->score;
+                namaMin = it->name;
+            }
             sumScore += it->score;
         }
 
@@ -201,12 +208,12 @@ namespace ScoreManager {
         });
 
         if (gamesPlayed > 0) {
-            cout << "\n  ===== PERSONAL BEST =====\n\n";
+            cout << "\n  " << GameColor::MENU_TITLE << "===== PERSONAL BEST =====" << GameColor::RESET << "\n\n";
             cout << "  Player       : " << actualName << "\n";
             cout << "  Best Score   : " << bestScore << "\n";
             cout << "  Games Played : " << gamesPlayed << "\n";
         } else {
-            cout << "\n  Player not found.\n";
+            cout << "\n  " << GameColor::TXT_WARNING << "Player not found." << GameColor::RESET << "\n";
         }
     }
 
@@ -214,7 +221,7 @@ namespace ScoreManager {
     // Feature 5: Hall of Fame
     // ============================================================
     void showHallOfFame(const vector<PlayerScore>& scores) {
-        cout << "\n  ===== HALL OF FAME =====\n\n";
+        cout << "\n  " << GameColor::MENU_TITLE << "===== HALL OF FAME =====" << GameColor::RESET << "\n\n";
         if (scores.empty()) {
             cout << "  No records available.\n";
             return;
@@ -222,7 +229,7 @@ namespace ScoreManager {
 
         auto best = scores.begin(); // already sorted descending
 
-        cout << "  ***  The Greatest Player of All Time  ***\n\n";
+        cout << "  " << GameColor::TXT_SUCCESS << "***  The Greatest Player of All Time  ***" << GameColor::RESET << "\n\n";
         cout << "  Player : " << best->name << "\n";
         cout << "  Score  : " << best->score << "\n";
         cout << "  Date   : " << best->dateTime << "\n";
@@ -244,7 +251,7 @@ namespace ScoreManager {
         while (inMenu) {
             system("cls");
             cout << "\n  ======================================================\n";
-            cout << "                       LEADERBOARD                      \n";
+            cout << GameColor::MENU_TITLE << "                       LEADERBOARD                      \n" << GameColor::RESET;
             cout << "  ======================================================\n\n";
             cout << "    [1] View Leaderboard\n";
             cout << "    [2] Search Player\n";
@@ -261,7 +268,7 @@ namespace ScoreManager {
             
             if (choice == '1') {
                 cout << "\n  ======================================================\n";
-                cout << "                       LEADERBOARD                      \n";
+                cout << GameColor::MENU_TITLE << "                       LEADERBOARD                      \n" << GameColor::RESET;
                 cout << "  ======================================================\n\n";
                 displayLeaderboardView(scores);
             } else if (choice == '2') {
@@ -276,7 +283,7 @@ namespace ScoreManager {
                 inMenu = false;
                 break;
             } else {
-                cout << "\n  Invalid choice.\n";
+                cout << "\n  " << GameColor::TXT_WARNING << "Invalid choice." << GameColor::RESET << "\n";
             }
             
             if (inMenu) {

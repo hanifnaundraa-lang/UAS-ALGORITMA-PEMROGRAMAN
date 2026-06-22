@@ -43,3 +43,19 @@ namespace FileConfig {
     const std::string SHOP_HISTORY_FILE = DATA_DIR + "shop_history.csv";
     const std::string GACHA_HISTORY_FILE = DATA_DIR + "gacha_history.csv";
 }
+
+// Material: Namespace — Color definitions
+namespace GameColor {
+    const std::string RESET = "\033[0m";
+    const std::string PLAYER = "\033[96m";    // Bright Cyan
+    const std::string BULLET = "\033[93m";    // Bright Yellow
+    const std::string ENEMY = "\033[91m";     // Bright Red
+    const std::string ARMORED = "\033[95m";   // Bright Magenta
+    const std::string WALL = "\033[90m";      // Bright Black / Gray
+    const std::string TXT_SUCCESS = "\033[92m"; // Bright Green
+    const std::string TXT_WARNING = "\033[93m"; // Bright Yellow
+    const std::string TXT_ERROR = "\033[91m";   // Bright Red
+    
+    const std::string MENU_TITLE = "\033[96m"; // Bright Cyan
+    const std::string HIGHLIGHT = "\033[97m";  // White
+}

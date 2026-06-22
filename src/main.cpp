@@ -1,8 +1,12 @@
 #include "game.h"
+#include "gameutils.h"
 #include <iostream>
 
 // Material: Function — Program entry point
 int main() {
+    // Enable ANSI Color Processing for Windows Terminal
+    GameUtils::initConsole();
+
     // Material: Exception Handling
     try {
         Game game;
