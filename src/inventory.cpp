@@ -138,11 +138,11 @@ namespace InventoryModule {
     // ============================================================
     void displayInventory(const std::vector<Item>& inventory) {
         std::cout << "\n  ========================================\n";
-        std::cout << "                INVENTORY                \n";
+        std::cout << GameColor::MENU_TITLE << "                INVENTORY                \n" << GameColor::RESET;
         std::cout << "  ========================================\n\n";
 
         if (inventory.empty()) {
-            std::cout << "    (Inventory is empty)\n\n";
+            std::cout << "    " << GameColor::TXT_WARNING << "(Inventory is empty)" << GameColor::RESET << "\n\n";
             return;
         }
 
@@ -186,13 +186,13 @@ namespace InventoryModule {
                 std::getline(std::cin, keyword);
 
                 if (keyword.empty()) {
-                    std::cout << "    No keyword entered.\n";
+                    std::cout << "    " << GameColor::TXT_WARNING << "No keyword entered." << GameColor::RESET << "\n";
                 } else {
                     auto results = searchByName(inventory, keyword);
                     if (results.empty()) {
-                        std::cout << "\n    No items found matching \"" << keyword << "\".\n";
+                        std::cout << "\n    " << GameColor::TXT_WARNING << "No items found matching \"" << keyword << "\"." << GameColor::RESET << "\n";
                     } else {
-                        std::cout << "\n    Found " << results.size() << " item(s):\n";
+                        std::cout << "\n    " << GameColor::TXT_SUCCESS << "Found " << results.size() << " item(s):" << GameColor::RESET << "\n";
                         displayInventory(results);
                     }
                 }
@@ -206,13 +206,13 @@ namespace InventoryModule {
                 std::getline(std::cin, type);
 
                 if (type.empty()) {
-                    std::cout << "    No type entered.\n";
+                    std::cout << "    " << GameColor::TXT_WARNING << "No type entered." << GameColor::RESET << "\n";
                 } else {
                     auto results = filterByType(inventory, type);
                     if (results.empty()) {
-                        std::cout << "\n    No items of type \"" << type << "\" found.\n";
+                        std::cout << "\n    " << GameColor::TXT_WARNING << "No items of type \"" << type << "\" found." << GameColor::RESET << "\n";
                     } else {
-                        std::cout << "\n    Showing " << results.size() << " item(s) of type \"" << type << "\":\n";
+                        std::cout << "\n    " << GameColor::TXT_SUCCESS << "Showing " << results.size() << " item(s) of type \"" << type << "\":" << GameColor::RESET << "\n";
                         displayInventory(results);
                     }
                 }
