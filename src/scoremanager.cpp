@@ -146,6 +146,7 @@ namespace ScoreManager {
         }
 
         vector<string> uniquePlayers;
+        string namaMax, namaMin;
         int maxScore = 0;
         int minScore = scores[0].score;
         long long sumScore = 0;
@@ -159,16 +160,16 @@ namespace ScoreManager {
                 uniquePlayers.push_back(lowerName);
             }
 
-            if (it->score > maxScore) maxScore = it->score;
-            if (it->score < minScore) minScore = it->score;
+            if (it->score > maxScore) maxScore = it->score; namaMax = it->name;
+            if (it->score < minScore) minScore = it->score; namaMin = it->name;
             sumScore += it->score;
         }
 
         int avgScore = (scores.size() > 0) ? (sumScore / scores.size()) : 0;
 
         cout << "  Total Players : " << uniquePlayers.size() << "\n";
-        cout << "  Highest Score : " << maxScore << "\n";
-        cout << "  Lowest Score  : " << minScore << "\n";
+        cout << "  Highest Score : " << maxScore << " - [" << namaMax << "]" << "\n";
+        cout << "  Lowest Score  : " << minScore << " - [" << namaMin << "]" << "\n";
         cout << "  Average Score : " << avgScore << "\n";
     }
 
@@ -245,12 +246,12 @@ namespace ScoreManager {
             cout << "\n  ======================================================\n";
             cout << "                       LEADERBOARD                      \n";
             cout << "  ======================================================\n\n";
-            cout << "    1. View Leaderboard\n";
-            cout << "    2. Search Player\n";
-            cout << "    3. Statistics\n";
-            cout << "    4. Personal Best\n";
-            cout << "    5. Hall Of Fame\n";
-            cout << "    6. Back\n\n";
+            cout << "    [1] View Leaderboard\n";
+            cout << "    [2] Search Player\n";
+            cout << "    [3] Statistics\n";
+            cout << "    [4] Personal Best\n";
+            cout << "    [5] Hall Of Fame\n";
+            cout << "    [0] Back\n\n";
             cout << "    Enter your choice: ";
             
             char choice = _getch();
@@ -271,9 +272,9 @@ namespace ScoreManager {
                 showPersonalBest(scores);
             } else if (choice == '5') {
                 showHallOfFame(scores);
-            } else if (choice == '6') {
+            } else if (choice == '0') {
                 inMenu = false;
-                continue;
+                break;
             } else {
                 cout << "\n  Invalid choice.\n";
             }

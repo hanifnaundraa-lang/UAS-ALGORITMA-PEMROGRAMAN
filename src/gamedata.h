@@ -39,6 +39,7 @@ struct Enemy {
     Position position;
     int health;
     bool active;
+    bool isArmored;
 };
 
 // Structs for future modules (inventory, shop, trading, gacha, leaderboard)

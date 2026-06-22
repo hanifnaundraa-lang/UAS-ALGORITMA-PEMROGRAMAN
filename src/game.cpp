@@ -22,16 +22,15 @@ void Game::run() {
     // Material: Exception Handling
     try {
         bool appRunning = true;
+        char choice;
         while (appRunning) {
             showMainMenu();
 
-            // Wait for menu choice
-            int choice = 0;
-            std::cin >> choice;
-            std::cin.ignore(); // clear newline from buffer
+            choice = _getch();
+            std::cout << choice << "\n";
 
             switch (choice) {
-                case 1:
+                case '1':
                     if (player.name.empty()) {
                         inputPlayerName();
                     } else {
@@ -39,25 +38,25 @@ void Game::run() {
                     }
                     showLoadoutAndStart();
                     break;
-                case 2:
+                case '2':
                     showInventory();
                     break;
-                case 3:
+                case '3':
                     showShop();
                     break;
-                case 4:
+                case '4':
                     showTrading();
                     break;
-                case 5:
+                case '5':
                     showLeaderboard();
                     break;
-                case 6:
+                case '6':
                     showGacha();
                     break;
-                case 7:
+                case '7':
                     showControls();
                     break;
-                case 0:
+                case '0':
                     appRunning = false;
                     break;
                 default:
@@ -296,6 +295,7 @@ void Game::showControls() {
     std::cout << "      " << GameConfig::PLAYER_SYMBOL << " = Your spaceship\n";
     std::cout << "      " << GameConfig::BULLET_SYMBOL << " = Bullet\n";
     std::cout << "      " << GameConfig::ENEMY_SYMBOL  << " = Enemy\n";
+    std::cout << "      " << GameConfig::ARMORED_SYMBOL  << " = Armored Enemy\n";
     std::cout << "      " << GameConfig::BORDER_SYMBOL  << " = Border\n\n";
 
     std::cout << "\n";
@@ -493,9 +493,6 @@ void Game::showLeaderboard() {
         std::cout << "\n  An error occurred while loading the leaderboard:\n";
         std::cout << "  " << e.what() << "\n";
     }
-
-    std::cout << "    Press any key to return to Main Menu...";
-    _getch();
 }
 
 // ============================================================
@@ -567,6 +564,7 @@ void Game::startGame() {
             updateBullets();
             updateEnemies();
             spawnEnemy();
+            spawnArmored();
             checkCollisions();
             render();
             frameCounter++;
@@ -678,6 +676,15 @@ void Game::spawnEnemy() {
 }
 
 // ============================================================
+// Material: Function — Spawn armored enemy periodically
+// ============================================================
+void Game::spawnArmored() {
+    if (frameCounter % GameConfig::ENEMY_SPAWN_INTERVAL == 0) {
+        EnemyModule::spawnArmored(enemies);
+    }
+}
+
+// ============================================================
 // Material: STL Vector & List, Iterator — Check collisions
 // ============================================================
 void Game::checkCollisions() {
@@ -694,15 +701,29 @@ void Game::checkCollisions() {
 
                 // Bullet hits enemy
                 bulletIt->active = false;
-                enemyIt->active = false;
-
-                // Material: Default Argument — reward functions
-                PlayerModule::addScore(player);  // uses default +10
-                PlayerModule::addCoin(player);    // uses default +5
-                player.destroyedEnemy++;
-
-                enemyIt = enemies.erase(enemyIt);
                 bulletHit = true;
+
+                enemyIt->health--;
+
+                if (enemyIt->health <= 0) {
+                    enemyIt->active = false;
+
+                    // Grant specific rewards based on enemy type
+                    if (enemyIt->isArmored) {
+                        PlayerModule::addScore(player, 20); // Armored gives 20 score
+                        PlayerModule::addCoin(player, 15);  // Armored gives 15 coin
+                    } else {
+                        // Material: Default Argument — reward functions
+                        PlayerModule::addScore(player);  // uses default +10
+                        PlayerModule::addCoin(player);   // uses default +15
+                    }
+                    
+                    player.destroyedEnemy++;
+
+                    enemyIt = enemies.erase(enemyIt);
+                } else {
+                    ++enemyIt;
+                }
                 break; // This bullet can only hit one enemy
             } else {
                 ++enemyIt;
@@ -805,7 +826,11 @@ void Game::render() {
             if (cell == GameConfig::EMPTY_SYMBOL) {
                 for (const auto& e : enemies) {
                     if (e.active && e.position.x == x && e.position.y == y) {
-                        cell = GameConfig::ENEMY_SYMBOL;
+                        if (e.health > 1) {
+                            cell = GameConfig::ARMORED_SYMBOL; 
+                        } else {
+                            cell = GameConfig::ENEMY_SYMBOL; 
+                        }
                         break;
                     }
                 }

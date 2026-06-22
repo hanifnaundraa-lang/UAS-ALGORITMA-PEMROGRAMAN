@@ -12,6 +12,7 @@ namespace EnemyModule {
         e.position.y = 0;  // Start at top
         e.health = 1;
         e.active = true;
+        e.isArmored = false;
         enemies.push_back(e);
     }
 
@@ -32,6 +33,22 @@ namespace EnemyModule {
                 ++it;
             }
         }
+    }
+
+    void spawnArmored(std::list<Enemy>& enemies) {
+        // Mengatur peluang kemunculan Armored Enemy (misal: hanya 10% peluang)
+        // rand() % 100 akan menghasilkan angka 0 - 99
+        if ((rand() % 100) >= 10) { 
+            return; // Jika angka >= 10 (90% kemungkinan), fungsi berhenti dan Armored Enemy tidak jadi spawn
+        }
+
+        Enemy b;
+        b.position.x = rand() % GameConfig::ARENA_WIDTH;
+        b.position.y = 0;  
+        b.health = 3;
+        b.active = true;
+        b.isArmored = true;
+        enemies.push_back(b);
     }
 
 } // namespace EnemyModule
